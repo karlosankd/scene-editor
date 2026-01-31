@@ -1,0 +1,299 @@
+export const translations = {
+  zh: {
+    // Menu Bar
+    menu: {
+      file: '文件',
+      edit: '编辑',
+      view: '视图',
+      add: '添加',
+      light: '灯光',
+      window: '窗口',
+    },
+    // File Menu
+    file: {
+      newProject: '新建项目',
+      openProject: '打开项目',
+      saveProject: '保存项目',
+      export: '导出',
+    },
+    // Edit Menu
+    edit: {
+      undo: '撤销',
+      redo: '重做',
+      duplicate: '复制',
+      delete: '删除',
+    },
+    // View Menu
+    view: {
+      toggleGrid: '切换网格',
+      toggleAxes: '切换坐标轴',
+      toggleStats: '切换统计信息',
+      resetCamera: '重置相机',
+    },
+    // Add Menu
+    add: {
+      cube: '立方体',
+      sphere: '球体',
+      cylinder: '圆柱体',
+      plane: '平面',
+      cone: '圆锥体',
+      torus: '圆环',
+    },
+    // Light Menu
+    light: {
+      directional: '平行光',
+      point: '点光源',
+      spot: '聚光灯',
+      ambient: '环境光',
+      hemisphere: '半球光',
+    },
+    // Window Menu
+    window: {
+      hierarchy: '层级面板',
+      inspector: '属性面板',
+      assets: '资源面板',
+      timeline: '时间轴',
+    },
+    // Toolbar
+    toolbar: {
+      move: '移动',
+      rotate: '旋转',
+      scale: '缩放',
+      world: '世界坐标',
+      local: '本地坐标',
+      grid: '网格',
+      snap: '吸附',
+      wireframe: '线框模式',
+      shadows: '阴影',
+      postProcessing: '后处理',
+      play: '播放',
+      pause: '暂停',
+      stop: '停止',
+      camera: '相机设置',
+    },
+    // Hierarchy Panel
+    hierarchy: {
+      title: '层级',
+      noObjects: '场景中没有对象',
+      addHint: '使用"添加"菜单创建对象',
+    },
+    // Inspector Panel
+    inspector: {
+      title: '属性',
+      noSelection: '未选择对象',
+      type: '类型',
+      transform: '变换',
+      position: '位置',
+      rotation: '旋转（度）',
+      scale: '缩放',
+      material: '材质',
+      color: '颜色',
+      metalness: '金属度',
+      roughness: '粗糙度',
+      opacity: '不透明度',
+      emissive: '自发光',
+      emissiveIntensity: '自发光强度',
+      wireframe: '线框',
+      light: '灯光',
+      intensity: '强度',
+      distance: '距离',
+      decay: '衰减',
+      angle: '角度',
+      penumbra: '半影',
+      groundColor: '地面颜色',
+      castShadow: '投射阴影',
+      postProcessing: '后处理',
+      enabled: '启用',
+      bloom: '泛光',
+      threshold: '阈值',
+      ssao: '环境光遮蔽',
+      radius: '半径',
+      bias: '偏移',
+      dof: '景深',
+      focusDistance: '焦距',
+      focalLength: '焦距长度',
+      bokehScale: '散景大小',
+      vignette: '暗角',
+      offset: '偏移',
+      darkness: '暗度',
+      chromaticAberration: '色差',
+    },
+    // Assets Panel
+    assets: {
+      title: '资源',
+      primitives: '基础形状',
+      lights: '灯光',
+      models: '模型',
+      textures: '纹理',
+      search: '搜索...',
+      importModel: '导入模型',
+      importTexture: '导入纹理',
+      supportedFormats: '支持格式',
+    },
+    // Timeline Panel
+    timeline: {
+      title: '时间轴',
+      noAnimation: '无动画',
+      addAnimation: '添加动画',
+      noTracks: '无轨道',
+      goToStart: '跳转到开始',
+      goToEnd: '跳转到结束',
+      zoom: '缩放',
+    },
+    // Common
+    common: {
+      perspective: '透视',
+      version: '场景编辑器',
+    },
+  },
+  en: {
+    // Menu Bar
+    menu: {
+      file: 'File',
+      edit: 'Edit',
+      view: 'View',
+      add: 'Add',
+      light: 'Light',
+      window: 'Window',
+    },
+    // File Menu
+    file: {
+      newProject: 'New Project',
+      openProject: 'Open Project',
+      saveProject: 'Save Project',
+      export: 'Export',
+    },
+    // Edit Menu
+    edit: {
+      undo: 'Undo',
+      redo: 'Redo',
+      duplicate: 'Duplicate',
+      delete: 'Delete',
+    },
+    // View Menu
+    view: {
+      toggleGrid: 'Toggle Grid',
+      toggleAxes: 'Toggle Axes',
+      toggleStats: 'Toggle Stats',
+      resetCamera: 'Reset Camera',
+    },
+    // Add Menu
+    add: {
+      cube: 'Cube',
+      sphere: 'Sphere',
+      cylinder: 'Cylinder',
+      plane: 'Plane',
+      cone: 'Cone',
+      torus: 'Torus',
+    },
+    // Light Menu
+    light: {
+      directional: 'Directional Light',
+      point: 'Point Light',
+      spot: 'Spot Light',
+      ambient: 'Ambient Light',
+      hemisphere: 'Hemisphere Light',
+    },
+    // Window Menu
+    window: {
+      hierarchy: 'Hierarchy',
+      inspector: 'Inspector',
+      assets: 'Assets',
+      timeline: 'Timeline',
+    },
+    // Toolbar
+    toolbar: {
+      move: 'Move',
+      rotate: 'Rotate',
+      scale: 'Scale',
+      world: 'World Space',
+      local: 'Local Space',
+      grid: 'Grid',
+      snap: 'Snap',
+      wireframe: 'Wireframe',
+      shadows: 'Shadows',
+      postProcessing: 'Post Processing',
+      play: 'Play',
+      pause: 'Pause',
+      stop: 'Stop',
+      camera: 'Camera Settings',
+    },
+    // Hierarchy Panel
+    hierarchy: {
+      title: 'Hierarchy',
+      noObjects: 'No objects in scene',
+      addHint: 'Use Add menu to create objects',
+    },
+    // Inspector Panel
+    inspector: {
+      title: 'Inspector',
+      noSelection: 'No object selected',
+      type: 'Type',
+      transform: 'Transform',
+      position: 'Position',
+      rotation: 'Rotation (degrees)',
+      scale: 'Scale',
+      material: 'Material',
+      color: 'Color',
+      metalness: 'Metalness',
+      roughness: 'Roughness',
+      opacity: 'Opacity',
+      emissive: 'Emissive',
+      emissiveIntensity: 'Emissive Int.',
+      wireframe: 'Wireframe',
+      light: 'Light',
+      intensity: 'Intensity',
+      distance: 'Distance',
+      decay: 'Decay',
+      angle: 'Angle',
+      penumbra: 'Penumbra',
+      groundColor: 'Ground Color',
+      castShadow: 'Cast Shadow',
+      postProcessing: 'Post Processing',
+      enabled: 'Enabled',
+      bloom: 'Bloom',
+      threshold: 'Threshold',
+      ssao: 'SSAO',
+      radius: 'Radius',
+      bias: 'Bias',
+      dof: 'Depth of Field',
+      focusDistance: 'Focus Dist.',
+      focalLength: 'Focal Len.',
+      bokehScale: 'Bokeh Scale',
+      vignette: 'Vignette',
+      offset: 'Offset',
+      darkness: 'Darkness',
+      chromaticAberration: 'Chromatic Aberration',
+    },
+    // Assets Panel
+    assets: {
+      title: 'Assets',
+      primitives: 'Primitives',
+      lights: 'Lights',
+      models: 'Models',
+      textures: 'Textures',
+      search: 'Search...',
+      importModel: 'Import Model',
+      importTexture: 'Import Texture',
+      supportedFormats: 'Supported formats',
+    },
+    // Timeline Panel
+    timeline: {
+      title: 'Timeline',
+      noAnimation: 'No Animation',
+      addAnimation: 'Add Animation',
+      noTracks: 'No tracks',
+      goToStart: 'Go to Start',
+      goToEnd: 'Go to End',
+      zoom: 'Zoom',
+    },
+    // Common
+    common: {
+      perspective: 'Perspective',
+      version: 'Scene Editor',
+    },
+  },
+}
+
+export type Language = 'zh' | 'en'
+export type Translations = typeof translations.zh
