@@ -11,8 +11,6 @@ import type {
   ViewportSettings,
   PostProcessingSettings,
   MaterialData,
-  GeometryData,
-  LightData,
   UIElement,
   AnimationClip,
   Command,
@@ -38,6 +36,7 @@ interface EditorState {
 
   // Camera
   cameraMode: CameraMode
+  cameraSpeed: number
 
   // Settings
   editorSettings: EditorSettings
@@ -89,6 +88,7 @@ interface EditorState {
 
   // Camera
   setCameraMode: (mode: CameraMode) => void
+  setCameraSpeed: (speed: number) => void
 
   // Settings
   updateEditorSettings: (settings: Partial<EditorSettings>) => void
@@ -210,6 +210,7 @@ export const useEditorStore = create<EditorState>()(
     transformMode: 'translate',
     transformSpace: 'world',
     cameraMode: 'orbit',
+    cameraSpeed: 1,
     editorSettings: defaultEditorSettings,
     viewportSettings: defaultViewportSettings,
     postProcessing: defaultPostProcessing,
@@ -415,6 +416,12 @@ export const useEditorStore = create<EditorState>()(
     setCameraMode: (mode) => {
       set((state) => {
         state.cameraMode = mode
+      })
+    },
+
+    setCameraSpeed: (speed) => {
+      set((state) => {
+        state.cameraSpeed = speed
       })
     },
 

@@ -2,7 +2,6 @@ import { useState } from 'react'
 import {
   FolderOpen,
   Box,
-  Image,
   Sun,
   Upload,
   Grid3X3,

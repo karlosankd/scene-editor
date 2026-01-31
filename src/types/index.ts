@@ -125,7 +125,7 @@ export interface SceneObject {
 }
 
 // Editor State
-export type TransformMode = 'translate' | 'rotate' | 'scale'
+export type TransformMode = 'select' | 'translate' | 'rotate' | 'scale'
 export type TransformSpace = 'world' | 'local'
 export type CameraMode = 'orbit' | 'fly' | 'firstPerson'
 export type SnapMode = 'none' | 'grid' | 'vertex'

@@ -266,7 +266,7 @@ export function MenuBar() {
                     } w-full px-4 py-2 text-sm text-left text-ue-text-primary flex justify-between items-center`}
                   >
                     <span>{item.label}</span>
-                    {item.shortcut && (
+                    {'shortcut' in item && item.shortcut && (
                       <span className="text-ue-text-muted text-xs">{item.shortcut}</span>
                     )}
                   </button>

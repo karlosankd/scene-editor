@@ -1,4 +1,5 @@
 import {
+  MousePointer2,
   Move,
   RotateCcw,
   Maximize2,
@@ -38,6 +39,7 @@ export function Toolbar() {
   } = useEditorStore()
 
   const transformTools: { mode: TransformMode; icon: typeof Move; labelKey: keyof typeof t.toolbar; shortcut: string }[] = [
+    { mode: 'select', icon: MousePointer2, labelKey: 'select', shortcut: 'Q' },
     { mode: 'translate', icon: Move, labelKey: 'move', shortcut: 'W' },
     { mode: 'rotate', icon: RotateCcw, labelKey: 'rotate', shortcut: 'E' },
     { mode: 'scale', icon: Maximize2, labelKey: 'scale', shortcut: 'R' },

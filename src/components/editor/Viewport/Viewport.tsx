@@ -2,11 +2,12 @@ import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Grid, GizmoHelper, GizmoViewport, Environment, Stats, PerspectiveCamera, TransformControls } from '@react-three/drei'
 import { EffectComposer, Bloom, SSAO, Vignette, DepthOfField, ChromaticAberration } from '@react-three/postprocessing'
 import { BlendFunction } from 'postprocessing'
-import { Suspense, useRef, useState, useEffect, useCallback } from 'react'
+import { Suspense, useRef, useEffect, useCallback } from 'react'
 import * as THREE from 'three'
 import { useEditorStore, useSelectedObject } from '@/stores/editorStore'
 import { useI18n } from '@/i18n'
 import { useFlyControls } from '@/hooks/useFlyControls'
+import { CameraSpeedControl } from './CameraSpeedControl'
 import { SceneObjects } from './SceneObjects'
 
 function PostProcessingEffects() {
@@ -14,43 +15,70 @@ function PostProcessingEffects() {
 
   if (!postProcessing.enabled) return null
 
-  return (
-    <EffectComposer>
-      {postProcessing.bloom.enabled && (
-        <Bloom
-          intensity={postProcessing.bloom.intensity}
-          luminanceThreshold={postProcessing.bloom.threshold}
-          luminanceSmoothing={postProcessing.bloom.smoothing}
-        />
-      )}
-      {postProcessing.ssao.enabled && (
-        <SSAO
-          radius={postProcessing.ssao.radius}
-          intensity={postProcessing.ssao.intensity}
-          bias={postProcessing.ssao.bias}
-        />
-      )}
-      {postProcessing.dof.enabled && (
-        <DepthOfField
-          focusDistance={postProcessing.dof.focusDistance}
-          focalLength={postProcessing.dof.focalLength}
-          bokehScale={postProcessing.dof.bokehScale}
-        />
-      )}
-      {postProcessing.vignette.enabled && (
-        <Vignette
-          offset={postProcessing.vignette.offset}
-          darkness={postProcessing.vignette.darkness}
-        />
-      )}
-      {postProcessing.chromaticAberration.enabled && (
-        <ChromaticAberration
-          blendFunction={BlendFunction.NORMAL}
-          offset={new THREE.Vector2(postProcessing.chromaticAberration.offset, postProcessing.chromaticAberration.offset)}
-        />
-      )}
-    </EffectComposer>
-  )
+  const effects: React.ReactElement[] = []
+  
+  if (postProcessing.bloom.enabled) {
+    effects.push(
+      <Bloom
+        key="bloom"
+        intensity={postProcessing.bloom.intensity}
+        luminanceThreshold={postProcessing.bloom.threshold}
+        luminanceSmoothing={postProcessing.bloom.smoothing}
+      />
+    )
+  }
+  
+  if (postProcessing.ssao.enabled) {
+    effects.push(
+      <SSAO
+        key="ssao"
+        radius={postProcessing.ssao.radius}
+        intensity={postProcessing.ssao.intensity}
+        bias={postProcessing.ssao.bias}
+        worldDistanceThreshold={1}
+        worldDistanceFalloff={0.1}
+        worldProximityThreshold={0.5}
+        worldProximityFalloff={0.1}
+      />
+    )
+  }
+  
+  if (postProcessing.dof.enabled) {
+    effects.push(
+      <DepthOfField
+        key="dof"
+        focusDistance={postProcessing.dof.focusDistance}
+        focalLength={postProcessing.dof.focalLength}
+        bokehScale={postProcessing.dof.bokehScale}
+      />
+    )
+  }
+  
+  if (postProcessing.vignette.enabled) {
+    effects.push(
+      <Vignette
+        key="vignette"
+        offset={postProcessing.vignette.offset}
+        darkness={postProcessing.vignette.darkness}
+      />
+    )
+  }
+  
+  if (postProcessing.chromaticAberration.enabled) {
+    effects.push(
+      <ChromaticAberration
+        key="chromatic"
+        blendFunction={BlendFunction.NORMAL}
+        offset={new THREE.Vector2(postProcessing.chromaticAberration.offset, postProcessing.chromaticAberration.offset)}
+        radialModulation={false}
+        modulationOffset={0}
+      />
+    )
+  }
+
+  if (effects.length === 0) return null
+
+  return <EffectComposer>{effects}</EffectComposer>
 }
 
 function TransformGizmo({ orbitRef }: { orbitRef: React.RefObject<any> }) {
@@ -99,7 +127,8 @@ function TransformGizmo({ orbitRef }: { orbitRef: React.RefObject<any> }) {
     }
   }, [selectedObject, updateTransform, orbitRef])
 
-  if (!selectedObject) return null
+  // Don't show transform gizmo in 'select' mode or when no object is selected
+  if (!selectedObject || transformMode === 'select') return null
 
   return (
     <TransformControls
@@ -118,8 +147,8 @@ function TransformGizmo({ orbitRef }: { orbitRef: React.RefObject<any> }) {
   )
 }
 
-function FlyControlsHandler() {
-  useFlyControls(true)
+function FlyControlsHandler({ orbitRef }: { orbitRef: React.RefObject<any> }) {
+  useFlyControls(true, orbitRef)
   return null
 }
 
@@ -144,7 +173,7 @@ function Scene({ orbitRef }: { orbitRef: React.RefObject<any> }) {
       />
 
       {/* Fly Controls */}
-      <FlyControlsHandler />
+      <FlyControlsHandler orbitRef={orbitRef} />
 
       {/* Lighting */}
       <ambientLight intensity={0.3} />
@@ -209,17 +238,7 @@ export function Viewport() {
   const { t } = useI18n()
   const editorSettings = useEditorStore((state) => state.editorSettings)
   const viewportSettings = useEditorStore((state) => state.viewportSettings)
-  const transformMode = useEditorStore((state) => state.transformMode)
   const orbitRef = useRef<any>(null)
-
-  const getModeLabel = () => {
-    switch (transformMode) {
-      case 'translate': return 'W'
-      case 'rotate': return 'E'
-      case 'scale': return 'R'
-      default: return ''
-    }
-  }
 
   return (
     <div className="w-full h-full bg-ue-bg-dark relative">
@@ -244,17 +263,17 @@ export function Viewport() {
         </div>
       )}
 
+      {/* Camera Speed Control */}
+      <CameraSpeedControl />
+
       {/* Viewport Info */}
       <div className="absolute bottom-2 left-2 text-xs text-ue-text-muted flex items-center gap-3">
         <span>{t.common.perspective}</span>
-        <span className="px-1.5 py-0.5 bg-ue-bg-light rounded text-ue-text-secondary">
-          {getModeLabel()}
-        </span>
       </div>
 
       {/* Controls Help */}
       <div className="absolute bottom-2 right-2 text-xs text-ue-text-muted bg-ue-bg/80 px-2 py-1 rounded">
-        <span>RMB + WASD/QE: 飞行 | 滚轮: 速度 | Q: 空间切换 | W/E/R: 移动/旋转/缩放</span>
+        <span>RMB + WASD/QE: 飞行 | 滚轮: 速度 | Q: 选择 | W/E/R: 移动/旋转/缩放</span>
       </div>
     </div>
   )

@@ -1,6 +1,7 @@
 import { useEffect, useCallback } from 'react'
 import { useEditorStore } from '@/stores/editorStore'
 import type { TransformMode } from '@/types'
+import { rightMouseState } from './useRightMouseState'
 
 export function useKeyboardShortcuts() {
   const {
@@ -28,21 +29,22 @@ export function useKeyboardShortcuts() {
 
     const ctrl = e.ctrlKey || e.metaKey
 
-    // Transform modes (UE5 style)
-    if (!ctrl) {
+    // UE5 Style: Transform mode shortcuts only work when RMB is NOT held
+    // When RMB is held, these keys are handled by useFlyControls for camera movement
+    if (!ctrl && !rightMouseState.isDown) {
       switch (e.key.toLowerCase()) {
         case ' ':
-          // Space - Cycle through transform modes (translate -> rotate -> scale -> translate)
+          // Space - Cycle through transform modes (select -> translate -> rotate -> scale -> select)
           e.preventDefault()
-          const modes: TransformMode[] = ['translate', 'rotate', 'scale']
+          const modes: TransformMode[] = ['select', 'translate', 'rotate', 'scale']
           const currentIndex = modes.indexOf(transformMode)
           const nextIndex = (currentIndex + 1) % modes.length
           setTransformMode(modes[nextIndex])
           break
         case 'q':
-          // Q - Select tool (deselect current selection)
+          // Q - Select tool (UE5 style - switches to select mode, no transform gizmo)
           e.preventDefault()
-          clearSelection()
+          setTransformMode('select')
           break
         case 'w':
           // W - Translate/Move tool
@@ -77,7 +79,7 @@ export function useKeyboardShortcuts() {
       }
     }
 
-    // Ctrl shortcuts
+    // Ctrl shortcuts (work regardless of RMB state)
     if (ctrl) {
       switch (e.key.toLowerCase()) {
         case 'z':
@@ -105,7 +107,7 @@ export function useKeyboardShortcuts() {
       }
     }
 
-    // Escape - Clear selection
+    // Escape - Clear selection (works regardless of RMB state)
     if (e.key === 'Escape') {
       e.preventDefault()
       clearSelection()
