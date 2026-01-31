@@ -49,7 +49,7 @@ export const translations = {
     },
     // Window Menu
     window: {
-      hierarchy: '层级面板',
+      hierarchy: '大纲面板',
       inspector: '属性面板',
       assets: '资源面板',
       timeline: '时间轴',
@@ -73,9 +73,23 @@ export const translations = {
     },
     // Hierarchy Panel
     hierarchy: {
-      title: '层级',
+      title: '大纲',
       noObjects: '场景中没有对象',
       addHint: '使用"添加"菜单创建对象',
+      search: '搜索对象...',
+      contextMenu: {
+        rename: '重命名',
+        duplicate: '复制对象',
+        copy: '复制',
+        paste: '粘贴',
+        delete: '删除',
+        selectChildren: '选择所有子对象',
+        createFolder: '创建文件夹',
+        createMesh: '创建网格子对象',
+        createLight: '创建灯光子对象',
+        createCamera: '创建相机子对象',
+        createGroup: '创建组子对象',
+      },
     },
     // Inspector Panel
     inspector: {
@@ -196,7 +210,7 @@ export const translations = {
     },
     // Window Menu
     window: {
-      hierarchy: 'Hierarchy',
+      hierarchy: 'Outliner',
       inspector: 'Inspector',
       assets: 'Assets',
       timeline: 'Timeline',
@@ -220,9 +234,23 @@ export const translations = {
     },
     // Hierarchy Panel
     hierarchy: {
-      title: 'Hierarchy',
+      title: 'Outliner',
       noObjects: 'No objects in scene',
       addHint: 'Use Add menu to create objects',
+      search: 'Search objects...',
+      contextMenu: {
+        rename: 'Rename',
+        duplicate: 'Duplicate',
+        copy: 'Copy',
+        paste: 'Paste',
+        delete: 'Delete',
+        selectChildren: 'Select Children',
+        createFolder: 'Create Folder',
+        createMesh: 'Create Mesh Child',
+        createLight: 'Create Light Child',
+        createCamera: 'Create Camera Child',
+        createGroup: 'Create Group Child',
+      },
     },
     // Inspector Panel
     inspector: {

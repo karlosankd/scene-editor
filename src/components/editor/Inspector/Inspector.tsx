@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import {
   Settings,
   Move,
@@ -44,20 +44,149 @@ interface NumberInputProps {
   step?: number
   min?: number
   max?: number
+  precision?: number
 }
 
-function NumberInput({ label, value, onChange, step = 0.1, min, max }: NumberInputProps) {
+function NumberInput({ label, value, onChange, step = 0.1, min, max, precision = 3 }: NumberInputProps) {
+  const [localValue, setLocalValue] = useState('')
+  const [isEditing, setIsEditing] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const dragStartRef = useRef<{ x: number; val: number } | null>(null)
+
+  // Sync local value when not editing
+  useEffect(() => {
+    if (!isEditing) {
+      setLocalValue(value.toFixed(precision))
+    }
+  }, [value, isEditing, precision])
+
+  // Parse expression and return new value
+  const parseExpression = useCallback((input: string, currentVal: number): number => {
+    const trimmed = input.trim()
+
+    // Check for math operators at the start
+    if (trimmed.startsWith('+')) {
+      const num = parseFloat(trimmed.slice(1))
+      return isNaN(num) ? currentVal : currentVal + num
+    }
+    if (trimmed.startsWith('-')) {
+      const num = parseFloat(trimmed.slice(1))
+      return isNaN(num) ? currentVal : currentVal - num
+    }
+    if (trimmed.startsWith('*')) {
+      const num = parseFloat(trimmed.slice(1))
+      return isNaN(num) ? currentVal : currentVal * num
+    }
+    if (trimmed.startsWith('/')) {
+      const num = parseFloat(trimmed.slice(1))
+      return isNaN(num) || num === 0 ? currentVal : currentVal / num
+    }
+
+    // Try to parse as a number
+    const parsed = parseFloat(trimmed)
+    return isNaN(parsed) ? currentVal : parsed
+  }, [])
+
+  const commitValue = useCallback(() => {
+    let newValue = parseExpression(localValue, value)
+
+    // Clamp to min/max
+    if (min !== undefined) newValue = Math.max(min, newValue)
+    if (max !== undefined) newValue = Math.min(max, newValue)
+
+    onChange(newValue)
+    setIsEditing(false)
+    setLocalValue(newValue.toFixed(precision))
+  }, [localValue, value, min, max, onChange, parseExpression, precision])
+
+  const handleFocus = () => {
+    setIsEditing(true)
+    setLocalValue(value.toFixed(precision))
+    setTimeout(() => inputRef.current?.select(), 0)
+  }
+
+  const handleBlur = () => {
+    commitValue()
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      commitValue()
+      inputRef.current?.blur()
+    } else if (e.key === 'Escape') {
+      setIsEditing(false)
+      setLocalValue(value.toFixed(precision))
+      inputRef.current?.blur()
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      const newVal = value + step * (e.shiftKey ? 10 : 1)
+      onChange(max !== undefined ? Math.min(max, newVal) : newVal)
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      const newVal = value - step * (e.shiftKey ? 10 : 1)
+      onChange(min !== undefined ? Math.max(min, newVal) : newVal)
+    }
+  }
+
+  // Drag to scrub value
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (isEditing) return
+
+    e.preventDefault()
+    setIsDragging(true)
+    dragStartRef.current = { x: e.clientX, val: value }
+    document.body.style.cursor = 'ew-resize'
+  }
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!dragStartRef.current) return
+
+    const delta = e.clientX - dragStartRef.current.x
+    const sensitivity = e.shiftKey ? 0.01 : 0.1
+    let newVal = dragStartRef.current.val + delta * sensitivity * step
+
+    if (min !== undefined) newVal = Math.max(min, newVal)
+    if (max !== undefined) newVal = Math.min(max, newVal)
+
+    onChange(newVal)
+  }, [step, min, max, onChange])
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false)
+    dragStartRef.current = null
+    document.body.style.cursor = ''
+  }, [])
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove)
+      window.addEventListener('mouseup', handleMouseUp)
+    }
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [isDragging, handleMouseMove, handleMouseUp])
+
   return (
-    <div className="flex items-center gap-2">
-      <label className="w-8 text-xs text-ue-text-secondary">{label}</label>
+    <div className="flex items-center gap-1">
+      <label
+        className="w-6 text-xs text-ue-text-secondary cursor-ew-resize select-none hover:text-ue-accent"
+        onMouseDown={handleMouseDown}
+        title="拖动调整数值"
+      >
+        {label}
+      </label>
       <input
-        type="number"
-        value={value.toFixed(3)}
-        onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
-        step={step}
-        min={min}
-        max={max}
-        className="flex-1 px-2 py-1 text-xs bg-ue-bg-dark border border-ue-border rounded text-ue-text-primary focus:border-ue-accent-blue focus:outline-none"
+        ref={inputRef}
+        type="text"
+        value={localValue}
+        onChange={(e) => setLocalValue(e.target.value)}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
+        className="flex-1 w-full px-1.5 py-0.5 text-xs bg-ue-bg-dark border border-ue-border rounded text-ue-text-primary focus:border-ue-accent-blue focus:outline-none text-center"
       />
     </div>
   )

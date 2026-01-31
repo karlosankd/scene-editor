@@ -6,6 +6,7 @@ export type ObjectType =
   | 'light'
   | 'camera'
   | 'group'
+  | 'folder'
   | 'model'
   | 'particle'
   | 'ui'

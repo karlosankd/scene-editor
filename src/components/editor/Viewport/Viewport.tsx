@@ -1,14 +1,15 @@
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Grid, GizmoHelper, GizmoViewport, Environment, Stats, PerspectiveCamera, TransformControls } from '@react-three/drei'
+import { OrbitControls, Grid, GizmoHelper, GizmoViewport, Environment, Stats, PerspectiveCamera } from '@react-three/drei'
 import { EffectComposer, Bloom, SSAO, Vignette, DepthOfField, ChromaticAberration } from '@react-three/postprocessing'
 import { BlendFunction } from 'postprocessing'
-import { Suspense, useRef, useEffect, useCallback } from 'react'
+import { Suspense, useRef } from 'react'
 import * as THREE from 'three'
-import { useEditorStore, useSelectedObject } from '@/stores/editorStore'
+import { useEditorStore } from '@/stores/editorStore'
 import { useI18n } from '@/i18n'
 import { useFlyControls } from '@/hooks/useFlyControls'
 import { CameraSpeedControl } from './CameraSpeedControl'
 import { SceneObjects } from './SceneObjects'
+import { TransformGizmo } from './TransformGizmo'
 
 function PostProcessingEffects() {
   const postProcessing = useEditorStore((state) => state.postProcessing)
@@ -79,72 +80,6 @@ function PostProcessingEffects() {
   if (effects.length === 0) return null
 
   return <EffectComposer>{effects}</EffectComposer>
-}
-
-function TransformGizmo({ orbitRef }: { orbitRef: React.RefObject<any> }) {
-  const selectedObject = useSelectedObject()
-  const transformMode = useEditorStore((state) => state.transformMode)
-  const transformSpace = useEditorStore((state) => state.transformSpace)
-  const updateTransform = useEditorStore((state) => state.updateTransform)
-
-  const transformRef = useRef<any>(null)
-  const meshRef = useRef<THREE.Mesh>(null)
-  const isDragging = useRef(false)
-
-  // Sync mesh position with selected object when selection changes
-  useEffect(() => {
-    if (meshRef.current && selectedObject) {
-      meshRef.current.position.set(...selectedObject.transform.position)
-      meshRef.current.rotation.set(...selectedObject.transform.rotation)
-      meshRef.current.scale.set(...selectedObject.transform.scale)
-    }
-  }, [selectedObject?.id, selectedObject?.transform.position, selectedObject?.transform.rotation, selectedObject?.transform.scale])
-
-  const handleDragStart = useCallback(() => {
-    isDragging.current = true
-    if (orbitRef.current) {
-      orbitRef.current.enabled = false
-    }
-  }, [orbitRef])
-
-  const handleDragEnd = useCallback(() => {
-    isDragging.current = false
-    if (orbitRef.current) {
-      orbitRef.current.enabled = true
-    }
-
-    // Update store only when drag ends
-    if (meshRef.current && selectedObject) {
-      const pos = meshRef.current.position
-      const rot = meshRef.current.rotation
-      const scl = meshRef.current.scale
-
-      updateTransform(selectedObject.id, {
-        position: [pos.x, pos.y, pos.z],
-        rotation: [rot.x, rot.y, rot.z],
-        scale: [scl.x, scl.y, scl.z],
-      })
-    }
-  }, [selectedObject, updateTransform, orbitRef])
-
-  // Don't show transform gizmo in 'select' mode or when no object is selected
-  if (!selectedObject || transformMode === 'select') return null
-
-  return (
-    <TransformControls
-      ref={transformRef}
-      object={meshRef.current || undefined}
-      mode={transformMode}
-      space={transformSpace}
-      onMouseDown={handleDragStart}
-      onMouseUp={handleDragEnd}
-    >
-      <mesh ref={meshRef}>
-        <boxGeometry args={[0.001, 0.001, 0.001]} />
-        <meshBasicMaterial visible={false} />
-      </mesh>
-    </TransformControls>
-  )
 }
 
 function FlyControlsHandler({ orbitRef }: { orbitRef: React.RefObject<any> }) {

@@ -1,7 +1,8 @@
-import { useRef, useMemo } from 'react'
+import { useRef, useMemo, useEffect } from 'react'
 import * as THREE from 'three'
 import { ThreeEvent } from '@react-three/fiber'
 import { useEditorStore } from '@/stores/editorStore'
+import { MeshRegistry } from '@/stores/meshRegistry'
 import type { SceneObject } from '@/types'
 
 function MeshObject({ object }: { object: SceneObject }) {
@@ -63,13 +64,11 @@ function MeshObject({ object }: { object: SceneObject }) {
     setHovered(null)
   }
 
+  // Note: position/rotation/scale are handled by parent SceneObjectRenderer group
+  // Do NOT set them here to avoid double-application during gizmo transforms
   return (
     <mesh
       ref={meshRef}
-      position={object.transform.position}
-      rotation={object.transform.rotation}
-      scale={object.transform.scale}
-      visible={object.visible}
       castShadow
       receiveShadow
       onClick={handleClick}
@@ -188,11 +187,28 @@ function LightObject({ object }: { object: SceneObject }) {
 }
 
 function SceneObjectRenderer({ object }: { object: SceneObject }) {
+  const groupRef = useRef<THREE.Group>(null)
   const objects = useEditorStore((state) => state.objects)
   const children = object.childIds.map((id) => objects[id]).filter(Boolean)
 
+  // Register the group (not mesh) so gizmo transforms the correct node
+  useEffect(() => {
+    if (groupRef.current) {
+      MeshRegistry.register(object.id, groupRef.current)
+    }
+    return () => {
+      MeshRegistry.unregister(object.id)
+    }
+  }, [object.id])
+
   return (
-    <group>
+    <group
+      ref={groupRef}
+      position={object.transform.position}
+      rotation={object.transform.rotation}
+      scale={object.transform.scale}
+      visible={object.visible}
+    >
       {object.type === 'mesh' && <MeshObject object={object} />}
       {object.type === 'light' && <LightObject object={object} />}
 

@@ -74,6 +74,7 @@ interface EditorState {
   updateTransform: (id: string, transform: Partial<Transform>) => void
   duplicateObject: (id: string) => string | null
   reparentObject: (id: string, newParentId: string | null) => void
+  reorderObject: (id: string, targetId: string, position: 'before' | 'after') => void
 
   // Selection
   selectObject: (id: string, additive?: boolean) => void
@@ -134,7 +135,7 @@ const defaultEditorSettings: EditorSettings = {
   snapEnabled: false,
   snapValue: 1,
   showGrid: true,
-  showAxes: true,
+  showAxes: false,
   showStats: false,
   backgroundColor: '#1a1a1a',
 }
@@ -358,6 +359,35 @@ export const useEditorStore = create<EditorState>()(
           state.rootObjectIds.push(id)
         }
 
+        state.isDirty = true
+      })
+    },
+
+    reorderObject: (id, targetId, position) => {
+      set((state) => {
+        const obj = state.objects[id]
+        const targetObj = state.objects[targetId]
+        if (!obj || !targetObj) return
+        if (obj.parentId !== targetObj.parentId) return
+
+        const siblingList = obj.parentId
+          ? state.objects[obj.parentId].childIds
+          : state.rootObjectIds
+
+        // Remove from current position
+        const filtered = siblingList.filter((cid) => cid !== id)
+
+        // Find target index and insert
+        const targetIndex = filtered.indexOf(targetId)
+        const insertIndex = position === 'before' ? targetIndex : targetIndex + 1
+        filtered.splice(insertIndex, 0, id)
+
+        // Update the list
+        if (obj.parentId) {
+          state.objects[obj.parentId].childIds = filtered
+        } else {
+          state.rootObjectIds = filtered
+        }
         state.isDirty = true
       })
     },
