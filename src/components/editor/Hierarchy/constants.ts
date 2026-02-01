@@ -86,4 +86,7 @@ export const TYPE_ICONS_MAPPING: Record<ObjectType, string> = {
   particle: 'particle',
   model: 'mesh',
   ui: 'group',
+  sky: 'light',
+  fog: 'particle',
+  environment: 'group',
 }

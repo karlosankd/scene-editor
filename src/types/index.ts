@@ -10,6 +10,9 @@ export type ObjectType =
   | 'model'
   | 'particle'
   | 'ui'
+  | 'sky'
+  | 'fog'
+  | 'environment'
 
 export type LightType =
   | 'ambient'
@@ -94,6 +97,35 @@ export interface GeometryData {
   arc?: number
 }
 
+// Sky Data (for @react-three/drei Sky component)
+export interface SkyData {
+  sunPosition: [number, number, number]
+  turbidity: number
+  rayleigh: number
+  mieCoefficient: number
+  mieDirectionalG: number
+  inclination: number
+  azimuth: number
+}
+
+// Fog Data (for Three.js FogExp2)
+export interface FogData {
+  type: 'linear' | 'exponential'
+  color: string
+  // Linear fog
+  near?: number
+  far?: number
+  // Exponential fog
+  density?: number
+}
+
+// Environment Data (for @react-three/drei Environment)
+export interface EnvironmentData {
+  preset?: 'sunset' | 'dawn' | 'night' | 'warehouse' | 'forest' | 'apartment' | 'studio' | 'city' | 'park' | 'lobby'
+  background: boolean
+  blur: number
+}
+
 // Component System
 export interface Component {
   id: string
@@ -119,6 +151,10 @@ export interface SceneObject {
   light?: LightData
   // Model specific
   modelUrl?: string
+  // Environment specific
+  sky?: SkyData
+  fog?: FogData
+  environment?: EnvironmentData
   // Components
   components: Component[]
   // Metadata

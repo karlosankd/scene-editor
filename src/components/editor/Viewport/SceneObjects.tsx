@@ -1,6 +1,7 @@
 import { useRef, useMemo, useEffect } from 'react'
 import * as THREE from 'three'
-import { ThreeEvent } from '@react-three/fiber'
+import { ThreeEvent, useThree } from '@react-three/fiber'
+import { Sky } from '@react-three/drei'
 import { useEditorStore } from '@/stores/editorStore'
 import { MeshRegistry } from '@/stores/meshRegistry'
 import type { SceneObject } from '@/types'
@@ -186,6 +187,51 @@ function LightObject({ object }: { object: SceneObject }) {
   )
 }
 
+// Sky Object Renderer
+function SkyObject({ object }: { object: SceneObject }) {
+  if (!object.sky || !object.visible) return null
+
+  const { sky } = object
+
+  return (
+    <Sky
+      distance={450000}
+      sunPosition={sky.sunPosition}
+      turbidity={sky.turbidity}
+      rayleigh={sky.rayleigh}
+      mieCoefficient={sky.mieCoefficient}
+      mieDirectionalG={sky.mieDirectionalG}
+    />
+  )
+}
+
+// Fog Object Renderer - applies fog to scene
+function FogObject({ object }: { object: SceneObject }) {
+  const scene = useThree((state) => state.scene)
+
+  useEffect(() => {
+    if (!object.fog || !object.visible) {
+      scene.fog = null
+      return
+    }
+
+    const { fog } = object
+    const color = new THREE.Color(fog.color)
+
+    if (fog.type === 'exponential') {
+      scene.fog = new THREE.FogExp2(color.getHex(), fog.density || 0.002)
+    } else {
+      scene.fog = new THREE.Fog(color.getHex(), fog.near || 1, fog.far || 100)
+    }
+
+    return () => {
+      scene.fog = null
+    }
+  }, [scene, object.fog, object.visible])
+
+  return null
+}
+
 function SceneObjectRenderer({ object }: { object: SceneObject }) {
   const groupRef = useRef<THREE.Group>(null)
   const objects = useEditorStore((state) => state.objects)
@@ -211,6 +257,8 @@ function SceneObjectRenderer({ object }: { object: SceneObject }) {
     >
       {object.type === 'mesh' && <MeshObject object={object} />}
       {object.type === 'light' && <LightObject object={object} />}
+      {object.type === 'sky' && <SkyObject object={object} />}
+      {object.type === 'fog' && <FogObject object={object} />}
 
       {children.map((child) => (
         <SceneObjectRenderer key={child.id} object={child} />

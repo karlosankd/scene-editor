@@ -8,7 +8,11 @@ import { Languages } from 'lucide-react'
 import { useEditorStore } from '@/stores/editorStore'
 import { useI18n } from '@/i18n'
 
-export function MenuBar() {
+interface MenuBarProps {
+  onNewProject?: () => void
+}
+
+export function MenuBar({ onNewProject }: MenuBarProps) {
   const { t, language, toggleLanguage } = useI18n()
   const {
     newProject,
@@ -88,7 +92,11 @@ export function MenuBar() {
   const handleAction = (action: string) => {
     switch (action) {
       case 'newProject':
-        newProject('Untitled Project')
+        if (onNewProject) {
+          onNewProject()
+        } else {
+          newProject('Untitled Project')
+        }
         break
       case 'saveProject':
         const project = saveProject()

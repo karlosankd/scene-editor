@@ -94,6 +94,9 @@ export const translations = {
         particle: '粒子',
         model: '模型',
         ui: '界面',
+        sky: '天空',
+        fog: '雾',
+        environment: '环境',
       },
       settingsMenu: {
         hierarchy: '层级',
@@ -192,6 +195,16 @@ export const translations = {
       perspective: '透视',
       version: '场景编辑器',
     },
+    // Template Selection
+    template: {
+      selectTemplate: '选择模板',
+      emptyLevel: '空白关卡',
+      emptyLevelDesc: '完全空白的场景，无任何灯光或环境，适合从零开始构建',
+      basicLevel: '基础关卡',
+      basicLevelDesc: '包含天空、太阳光和大气雾效的基础户外场景',
+      create: '创建',
+      cancel: '取消',
+    },
   },
   en: {
     // Menu Bar
@@ -288,6 +301,9 @@ export const translations = {
         particle: 'Particle',
         model: 'Model',
         ui: 'UI',
+        sky: 'Sky',
+        fog: 'Fog',
+        environment: 'Environment',
       },
       settingsMenu: {
         hierarchy: 'Hierarchy',
@@ -385,6 +401,16 @@ export const translations = {
     common: {
       perspective: 'Perspective',
       version: 'Scene Editor',
+    },
+    // Template Selection
+    template: {
+      selectTemplate: 'Select Template',
+      emptyLevel: 'Empty Level',
+      emptyLevelDesc: 'A completely blank scene with no lights or environment, perfect for building from scratch',
+      basicLevel: 'Basic Level',
+      basicLevelDesc: 'A basic outdoor scene with sky, sunlight, and atmospheric fog',
+      create: 'Create',
+      cancel: 'Cancel',
     },
   },
 }

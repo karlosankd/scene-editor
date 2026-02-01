@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Grid, GizmoHelper, GizmoViewport, Environment, Stats, PerspectiveCamera } from '@react-three/drei'
+import { OrbitControls, Grid, GizmoHelper, GizmoViewport, Stats, PerspectiveCamera } from '@react-three/drei'
 import { EffectComposer, Bloom, SSAO, Vignette, DepthOfField, ChromaticAberration } from '@react-three/postprocessing'
 import { BlendFunction } from 'postprocessing'
 import { Suspense, useRef } from 'react'
@@ -90,7 +90,6 @@ function FlyControlsHandler({ orbitRef }: { orbitRef: React.RefObject<any> }) {
 
 function Scene({ orbitRef }: { orbitRef: React.RefObject<any> }) {
   const editorSettings = useEditorStore((state) => state.editorSettings)
-  const viewportSettings = useEditorStore((state) => state.viewportSettings)
 
   return (
     <>
@@ -114,20 +113,6 @@ function Scene({ orbitRef }: { orbitRef: React.RefObject<any> }) {
       {/* Camera Focus Handler (F key) */}
       <CameraFocusHandler orbitRef={orbitRef} />
 
-      {/* Lighting */}
-      <ambientLight intensity={0.3} />
-      <directionalLight
-        position={[10, 20, 10]}
-        intensity={1}
-        castShadow={viewportSettings.enableShadows}
-        shadow-mapSize={[2048, 2048]}
-        shadow-camera-far={50}
-        shadow-camera-left={-10}
-        shadow-camera-right={10}
-        shadow-camera-top={10}
-        shadow-camera-bottom={-10}
-      />
-
       {/* Grid */}
       {editorSettings.showGrid && (
         <Grid
@@ -150,10 +135,7 @@ function Scene({ orbitRef }: { orbitRef: React.RefObject<any> }) {
         <axesHelper args={[5]} />
       )}
 
-      {/* Environment */}
-      <Environment preset="city" background={false} />
-
-      {/* Scene Objects */}
+      {/* Scene Objects (includes Sky, Fog, Lights, Meshes) */}
       <SceneObjects />
 
       {/* Transform Gizmo */}

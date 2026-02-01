@@ -1,4 +1,5 @@
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
+import { useState, useEffect } from 'react'
 import { MenuBar } from './MenuBar/MenuBar'
 import { Toolbar } from './Toolbar/Toolbar'
 import { Hierarchy } from './Hierarchy/Hierarchy'
@@ -6,25 +7,36 @@ import { Viewport } from './Viewport/Viewport'
 import { Inspector } from './Inspector/Inspector'
 import { Assets } from './Assets/Assets'
 import { Timeline } from './Timeline/Timeline'
+import { TemplateSelector } from './Dialogs/TemplateSelector'
 import { useEditorStore } from '@/stores/editorStore'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
-import { useEffect } from 'react'
+import { templates, type LevelTemplate } from '@/data/templates'
 
 export function EditorLayout() {
   const panels = useEditorStore((state) => state.panels)
   const newProject = useEditorStore((state) => state.newProject)
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false)
 
   // Initialize keyboard shortcuts
   useKeyboardShortcuts()
 
   useEffect(() => {
-    // Initialize with a new project
-    newProject('Untitled Project')
+    // Initialize with basic template on first load
+    newProject('Untitled Project', templates.basic)
   }, [newProject])
+
+  const handleNewProject = () => {
+    setShowTemplateSelector(true)
+  }
+
+  const handleTemplateSelect = (template: LevelTemplate) => {
+    newProject('Untitled Project', template)
+    setShowTemplateSelector(false)
+  }
 
   return (
     <div className="flex flex-col w-full h-full bg-ue-bg-dark">
-      <MenuBar />
+      <MenuBar onNewProject={handleNewProject} />
       <Toolbar />
 
       <div className="flex-1 overflow-hidden">
@@ -84,6 +96,13 @@ export function EditorLayout() {
           )}
         </PanelGroup>
       </div>
+
+      {/* Template Selection Dialog */}
+      <TemplateSelector
+        isOpen={showTemplateSelector}
+        onClose={() => setShowTemplateSelector(false)}
+        onSelect={handleTemplateSelect}
+      />
     </div>
   )
 }

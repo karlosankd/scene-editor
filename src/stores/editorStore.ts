@@ -3,6 +3,7 @@ import { immer } from 'zustand/middleware/immer'
 import { v4 as uuidv4 } from 'uuid'
 import * as THREE from 'three'
 import { MeshRegistry } from './meshRegistry'
+import { templates, type LevelTemplate } from '@/data/templates'
 import type {
   SceneObject,
   Transform,
@@ -120,7 +121,7 @@ interface EditorState {
   stopAnimation: () => void
 
   // Project
-  newProject: (name: string) => void
+  newProject: (name: string, template?: LevelTemplate) => void
   loadProject: (project: Project) => void
   saveProject: () => Project
   exportProject: () => string
@@ -686,18 +687,36 @@ export const useEditorStore = create<EditorState>()(
     },
 
     // Project Actions
-    newProject: (name) => {
+    newProject: (name, template) => {
+      // Use provided template or default to basic
+      const selectedTemplate = template || templates.basic
+      const templateObjects = selectedTemplate.objects()
+      
+      // Build objects map and root IDs from template
+      const objectsMap: Record<string, SceneObject> = {}
+      const rootIds: string[] = []
+      
+      for (const obj of templateObjects) {
+        objectsMap[obj.id] = obj
+        if (!obj.parentId) {
+          rootIds.push(obj.id)
+        }
+      }
+
       const project: Project = {
         id: uuidv4(),
         name,
         version: '1.0.0',
         created: new Date().toISOString(),
         modified: new Date().toISOString(),
-        settings: defaultEditorSettings,
+        settings: {
+          ...defaultEditorSettings,
+          backgroundColor: selectedTemplate.backgroundColor,
+        },
         viewport: defaultViewportSettings,
         postProcessing: defaultPostProcessing,
-        objects: {},
-        rootObjectIds: [],
+        objects: objectsMap,
+        rootObjectIds: rootIds,
         animations: [],
         uiElements: [],
         assets: [],
@@ -705,14 +724,18 @@ export const useEditorStore = create<EditorState>()(
 
       set((state) => {
         state.project = project
-        state.objects = {}
-        state.rootObjectIds = []
+        state.objects = objectsMap
+        state.rootObjectIds = rootIds
         state.selectedIds = []
         state.uiElements = []
         state.animations = []
         state.isDirty = false
         state.history = []
         state.historyIndex = -1
+        state.editorSettings = {
+          ...state.editorSettings,
+          backgroundColor: selectedTemplate.backgroundColor,
+        }
       })
     },
 
