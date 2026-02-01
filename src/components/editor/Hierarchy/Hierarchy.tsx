@@ -61,11 +61,23 @@ export function Hierarchy() {
     containerRef,
   })
 
+  // Helper to generate unique folder name
+  const getUniqueFolderName = (baseName: string): string => {
+    const existingNames = Object.values(objects).map((obj) => obj.name)
+    if (!existingNames.includes(baseName)) {
+      return baseName
+    }
+    let counter = 1
+    while (existingNames.includes(`${baseName} ${counter}`)) {
+      counter++
+    }
+    return `${baseName} ${counter}`
+  }
+
   // Top Toolbar Handlers
   const handleAddClick = () => {
-    // Default to adding a basic mesh or open a menu
-    // For now, let's just add a folder or group as a safe default if no context
-    addObject({ name: 'New Folder', type: 'folder' })
+    const folderName = getUniqueFolderName(t.hierarchy.newFolder)
+    addObject({ name: folderName, type: 'folder' })
   }
 
   const handleFilterClick = () => {
