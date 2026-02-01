@@ -7,6 +7,8 @@ import {
   Sparkles,
   ChevronDown,
   ChevronRight,
+  Lock,
+  Unlock,
 } from 'lucide-react'
 import { useEditorStore, useSelectedObject } from '@/stores/editorStore'
 import { useI18n } from '@/i18n'
@@ -38,21 +40,28 @@ function CollapsibleSection({ title, icon, children, defaultOpen = true }: Colla
 }
 
 interface NumberInputProps {
-  label: string
   value: number
   onChange: (value: number) => void
   step?: number
   min?: number
   max?: number
   precision?: number
+  accentColor?: 'red' | 'green' | 'blue'
+  suffix?: string
 }
 
-function NumberInput({ label, value, onChange, step = 0.1, min, max, precision = 3 }: NumberInputProps) {
+function NumberInput({ value, onChange, step = 0.1, min, max, precision = 1, accentColor = 'blue', suffix }: NumberInputProps) {
   const [localValue, setLocalValue] = useState('')
   const [isEditing, setIsEditing] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const dragStartRef = useRef<{ x: number; val: number } | null>(null)
+
+  const accentColors = {
+    red: 'border-l-red-500',
+    green: 'border-l-green-500',
+    blue: 'border-l-blue-500',
+  }
 
   // Sync local value when not editing
   useEffect(() => {
@@ -103,7 +112,6 @@ function NumberInput({ label, value, onChange, step = 0.1, min, max, precision =
   const handleFocus = () => {
     setIsEditing(true)
     setLocalValue(value.toFixed(precision))
-    setTimeout(() => inputRef.current?.select(), 0)
   }
 
   const handleBlur = () => {
@@ -130,9 +138,7 @@ function NumberInput({ label, value, onChange, step = 0.1, min, max, precision =
   }
 
   // Drag to scrub value
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (isEditing) return
-
+  const handleLabelMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
     setIsDragging(true)
     dragStartRef.current = { x: e.clientX, val: value }
@@ -170,14 +176,9 @@ function NumberInput({ label, value, onChange, step = 0.1, min, max, precision =
   }, [isDragging, handleMouseMove, handleMouseUp])
 
   return (
-    <div className="flex items-center gap-1">
-      <label
-        className="w-6 text-xs text-ue-text-secondary cursor-ew-resize select-none hover:text-ue-accent"
-        onMouseDown={handleMouseDown}
-        title="拖动调整数值"
-      >
-        {label}
-      </label>
+    <div 
+      className={`flex items-center bg-ue-bg-dark border border-ue-border border-l-2 ${accentColors[accentColor]} focus-within:border-ue-accent-blue focus-within:border-l-2 ${accentColors[accentColor]}`}
+    >
       <input
         ref={inputRef}
         type="text"
@@ -186,8 +187,12 @@ function NumberInput({ label, value, onChange, step = 0.1, min, max, precision =
         onFocus={handleFocus}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
-        className="flex-1 w-full px-1.5 py-0.5 text-xs bg-ue-bg-dark border border-ue-border rounded text-ue-text-primary focus:border-ue-accent-blue focus:outline-none text-center"
+        onMouseDown={handleLabelMouseDown}
+        className="flex-1 w-full px-2 py-1 text-xs bg-transparent text-ue-text-primary focus:outline-none text-right cursor-ew-resize"
       />
+      {suffix && (
+        <span className="text-xs text-ue-text-muted pr-1.5">{suffix}</span>
+      )}
     </div>
   )
 }
@@ -245,10 +250,81 @@ function SliderInput({ label, value, onChange, min = 0, max = 1, step = 0.01 }: 
   )
 }
 
+type TransformLocationType = 'relative' | 'world'
+
+interface TransformLabelDropdownProps {
+  label: string
+  locationType: TransformLocationType
+  onLocationTypeChange: (type: TransformLocationType) => void
+}
+
+function TransformLabelDropdown({ label, locationType, onLocationTypeChange }: TransformLabelDropdownProps) {
+  const { t } = useI18n()
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isOpen])
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-1 min-w-[72px] px-2 py-1 text-xs text-ue-text-secondary bg-ue-bg-dark border border-ue-border hover:bg-ue-bg-hover"
+      >
+        <span>{label}</span>
+        <ChevronDown size={12} className={`ml-auto transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+      
+      {isOpen && (
+        <div className="absolute top-full left-0 mt-1 z-50 w-[120px] bg-[#2a2a2a] border border-ue-border shadow-lg">
+          {/* Header */}
+          <div className="flex items-center gap-2 px-2 py-1.5 border-b border-ue-border">
+            <span className="text-xs text-ue-text-muted whitespace-nowrap">{label} {t.inspector.locationType}</span>
+            <div className="flex-1 border-t border-ue-border" />
+          </div>
+          
+          {/* Options */}
+          <div className="py-1">
+            <button
+              onClick={() => { onLocationTypeChange('relative'); setIsOpen(false) }}
+              className="flex items-center gap-2 w-full px-2 py-1 text-xs text-ue-text-primary hover:bg-ue-bg-hover"
+            >
+              <span className={`w-2 h-2 rounded-full ${locationType === 'relative' ? 'bg-white' : 'border border-ue-text-muted'}`} />
+              <span>{t.inspector.relative}</span>
+            </button>
+            <button
+              onClick={() => { onLocationTypeChange('world'); setIsOpen(false) }}
+              className="flex items-center gap-2 w-full px-2 py-1 text-xs text-ue-text-primary hover:bg-ue-bg-hover"
+            >
+              <span className={`w-2 h-2 rounded-full ${locationType === 'world' ? 'bg-white' : 'border border-ue-text-muted'}`} />
+              <span>{t.inspector.worldScene}</span>
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 function TransformEditor() {
   const { t } = useI18n()
   const selectedObject = useSelectedObject()
   const updateTransform = useEditorStore((state) => state.updateTransform)
+  const [scaleLocked, setScaleLocked] = useState(true)
+  const [positionType, setPositionType] = useState<TransformLocationType>('relative')
+  const [rotationType, setRotationType] = useState<TransformLocationType>('relative')
+  const [scaleType, setScaleType] = useState<TransformLocationType>('relative')
 
   if (!selectedObject) return null
 
@@ -267,54 +343,82 @@ function TransformEditor() {
   }
 
   const handleScaleChange = (axis: number, value: number) => {
-    const newScale = [...transform.scale] as [number, number, number]
-    newScale[axis] = value
-    updateTransform(selectedObject.id, { scale: newScale })
+    if (scaleLocked) {
+      // Uniform scale: apply same value to all axes
+      updateTransform(selectedObject.id, { scale: [value, value, value] })
+    } else {
+      const newScale = [...transform.scale] as [number, number, number]
+      newScale[axis] = value
+      updateTransform(selectedObject.id, { scale: newScale })
+    }
   }
+
+  const axisColors: ('red' | 'green' | 'blue')[] = ['red', 'green', 'blue']
 
   return (
     <CollapsibleSection title={t.inspector.transform} icon={<Move size={14} />}>
-      <div className="space-y-3">
+      <div className="space-y-2">
         {/* Position */}
-        <div>
-          <div className="text-xs text-ue-text-muted mb-1">{t.inspector.position}</div>
-          <div className="grid grid-cols-3 gap-1">
-            {['X', 'Y', 'Z'].map((axis, i) => (
+        <div className="flex items-center gap-2">
+          <TransformLabelDropdown
+            label={t.inspector.position}
+            locationType={positionType}
+            onLocationTypeChange={setPositionType}
+          />
+          <div className="flex-1 grid grid-cols-3 gap-1">
+            {[0, 1, 2].map((i) => (
               <NumberInput
-                key={axis}
-                label={axis}
+                key={i}
                 value={transform.position[i]}
                 onChange={(v) => handlePositionChange(i, v)}
+                accentColor={axisColors[i]}
               />
             ))}
           </div>
         </div>
 
         {/* Rotation */}
-        <div>
-          <div className="text-xs text-ue-text-muted mb-1">{t.inspector.rotation}</div>
-          <div className="grid grid-cols-3 gap-1">
-            {['X', 'Y', 'Z'].map((axis, i) => (
+        <div className="flex items-center gap-2">
+          <TransformLabelDropdown
+            label={t.inspector.rotation}
+            locationType={rotationType}
+            onLocationTypeChange={setRotationType}
+          />
+          <div className="flex-1 grid grid-cols-3 gap-1">
+            {[0, 1, 2].map((i) => (
               <NumberInput
-                key={axis}
-                label={axis}
+                key={i}
                 value={transform.rotation[i] * (180 / Math.PI)}
                 onChange={(v) => handleRotationChange(i, v)}
+                accentColor={axisColors[i]}
+                suffix="°"
+                step={1}
               />
             ))}
           </div>
         </div>
 
         {/* Scale */}
-        <div>
-          <div className="text-xs text-ue-text-muted mb-1">{t.inspector.scale}</div>
-          <div className="grid grid-cols-3 gap-1">
-            {['X', 'Y', 'Z'].map((axis, i) => (
+        <div className="flex items-center gap-2">
+          <TransformLabelDropdown
+            label={t.inspector.scale}
+            locationType={scaleType}
+            onLocationTypeChange={setScaleType}
+          />
+          <button
+            onClick={() => setScaleLocked(!scaleLocked)}
+            className="p-1 text-ue-text-muted hover:text-ue-text-primary"
+            title={scaleLocked ? '解锁统一缩放' : '锁定统一缩放'}
+          >
+            {scaleLocked ? <Lock size={14} /> : <Unlock size={14} />}
+          </button>
+          <div className="flex-1 grid grid-cols-3 gap-1">
+            {[0, 1, 2].map((i) => (
               <NumberInput
-                key={axis}
-                label={axis}
+                key={i}
                 value={transform.scale[i]}
                 onChange={(v) => handleScaleChange(i, v)}
+                accentColor={axisColors[i]}
                 step={0.1}
               />
             ))}
