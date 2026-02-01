@@ -8,7 +8,7 @@ export interface HierarchySettings {
   hideEmptyFolders: boolean      // 隐藏空文件夹
   hideHiddenObjects: boolean     // 隐藏隐藏的对象
   // 选项
-  autoFrameSelection: boolean    // 始终帧选择（选中时聚焦）
+  focusOnSelect: boolean         // 选中时自动聚焦
   doubleClickToEnterFolder: boolean // 双击切换当前文件夹
 }
 
@@ -16,7 +16,7 @@ export const defaultHierarchySettings: HierarchySettings = {
   showOnlySelected: false,
   hideEmptyFolders: false,
   hideHiddenObjects: false,
-  autoFrameSelection: false,
+  focusOnSelect: false,
   doubleClickToEnterFolder: true,
 }
 
@@ -175,9 +175,9 @@ export function SettingsMenu({
       {/* 选项 */}
       <MenuSection title={t.hierarchy.settingsMenu.options} />
       <MenuItem
-        label={t.hierarchy.settingsMenu.autoFrameSelection}
-        checked={settings.autoFrameSelection}
-        onClick={() => toggleSetting('autoFrameSelection')}
+        label={t.hierarchy.settingsMenu.focusOnSelect}
+        checked={settings.focusOnSelect}
+        onClick={() => toggleSetting('focusOnSelect')}
       />
       <MenuItem
         label={t.hierarchy.settingsMenu.doubleClickToEnterFolder}

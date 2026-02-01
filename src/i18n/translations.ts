@@ -104,7 +104,7 @@ export const translations = {
         hideEmptyFolders: '隐藏空文件夹',
         hideHiddenObjects: '隐藏隐藏的对象',
         options: '选项',
-        autoFrameSelection: '始终帧选择',
+        focusOnSelect: '选中时自动聚焦',
         doubleClickToEnterFolder: '双击切换当前文件夹',
       },
       contextMenu: {
@@ -295,7 +295,7 @@ export const translations = {
         hideEmptyFolders: 'Hide Empty Folders',
         hideHiddenObjects: 'Hide Hidden Objects',
         options: 'Options',
-        autoFrameSelection: 'Auto Frame Selection',
+        focusOnSelect: 'Focus on Select',
         doubleClickToEnterFolder: 'Double Click to Enter Folder',
       },
       contextMenu: {

@@ -21,6 +21,7 @@ export function Hierarchy() {
   const removeObject = useEditorStore((state) => state.removeObject)
   const duplicateObject = useEditorStore((state) => state.duplicateObject)
   const addObject = useEditorStore((state) => state.addObject)
+  const focusOnSelected = useEditorStore((state) => state.focusOnSelected)
 
   const hierarchyState = useHierarchyState()
   const clipboard = useClipboard()
@@ -73,6 +74,18 @@ export function Hierarchy() {
     }
     return `${baseName} ${counter}`
   }
+
+  // Wrapper for selectObject that auto-focuses when setting is enabled
+  const handleSelectObject = useCallback(
+    (id: string, additive?: boolean) => {
+      selectObject(id, additive)
+      if (hierarchySettings.focusOnSelect && !additive) {
+        // Delay slightly to ensure selection is updated
+        setTimeout(() => focusOnSelected(), 0)
+      }
+    },
+    [selectObject, focusOnSelected, hierarchySettings.focusOnSelect]
+  )
 
   // Top Toolbar Handlers
   const handleAddClick = () => {
@@ -267,6 +280,7 @@ export function Hierarchy() {
               isParentHidden={isParentHidden}
               onToggleExpand={() => toggleExpanded(object.id)}
               onContextMenu={(e) => openContextMenu(e, object.id)}
+              onSelect={handleSelectObject}
               onStartRename={() => startRename(object.id)}
               onRenameChange={updateRenameValue}
               onRenameSubmit={submitRename}

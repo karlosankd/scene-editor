@@ -30,6 +30,7 @@ interface HierarchyItemProps {
   isParentHidden?: boolean
   onToggleExpand: () => void
   onContextMenu: (e: React.MouseEvent) => void
+  onSelect: (id: string, additive?: boolean) => void
   onStartRename: () => void
   onRenameChange: (value: string) => void
   onRenameSubmit: () => void
@@ -51,6 +52,7 @@ export function HierarchyItem({
   isParentHidden = false,
   onToggleExpand,
   onContextMenu,
+  onSelect,
   onRenameChange,
   onRenameSubmit,
   onRenameCancel,
@@ -61,7 +63,6 @@ export function HierarchyItem({
   onDragEnd,
 }: HierarchyItemProps) {
   const selectedIds = useEditorStore((state) => state.selectedIds)
-  const selectObject = useEditorStore((state) => state.selectObject)
   const updateObject = useEditorStore((state) => state.updateObject)
   const objects = useEditorStore((state) => state.objects)
 
@@ -117,7 +118,7 @@ export function HierarchyItem({
   // Event Handlers
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    selectObject(object.id, e.ctrlKey || e.metaKey)
+    onSelect(object.id, e.ctrlKey || e.metaKey)
   }
 
   const handleDoubleClick = (e: React.MouseEvent) => {
