@@ -29,6 +29,7 @@ interface EditorState {
   // Selection
   selectedIds: string[]
   hoveredId: string | null
+  focusTargetId: string | null // ID of object to focus camera on
 
   // Transform
   transformMode: TransformMode
@@ -82,6 +83,8 @@ interface EditorState {
   clearSelection: () => void
   selectAll: () => void
   setHovered: (id: string | null) => void
+  focusOnSelected: () => void
+  clearFocusTarget: () => void
 
   // Transform
   setTransformMode: (mode: TransformMode) => void
@@ -208,6 +211,7 @@ export const useEditorStore = create<EditorState>()(
     rootObjectIds: [],
     selectedIds: [],
     hoveredId: null,
+    focusTargetId: null,
     transformMode: 'translate',
     transformSpace: 'world',
     cameraMode: 'orbit',
@@ -426,6 +430,20 @@ export const useEditorStore = create<EditorState>()(
     setHovered: (id) => {
       set((state) => {
         state.hoveredId = id
+      })
+    },
+
+    focusOnSelected: () => {
+      set((state) => {
+        if (state.selectedIds.length > 0) {
+          state.focusTargetId = state.selectedIds[0]
+        }
+      })
+    },
+
+    clearFocusTarget: () => {
+      set((state) => {
+        state.focusTargetId = null
       })
     },
 

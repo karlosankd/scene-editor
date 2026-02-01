@@ -15,6 +15,7 @@ export function useKeyboardShortcuts() {
     undo,
     redo,
     clearSelection,
+    focusOnSelected,
   } = useEditorStore()
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -73,8 +74,11 @@ export function useKeyboardShortcuts() {
           selectedIds.forEach((id) => removeObject(id))
           break
         case 'f':
-          // F - Focus on selected (handled in viewport)
+          // F - Focus on selected object
           e.preventDefault()
+          if (selectedIds.length > 0) {
+            focusOnSelected()
+          }
           break
       }
     }
@@ -123,6 +127,7 @@ export function useKeyboardShortcuts() {
     undo,
     redo,
     clearSelection,
+    focusOnSelected,
   ])
 
   useEffect(() => {

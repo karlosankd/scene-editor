@@ -8,6 +8,7 @@ import { useEditorStore } from '@/stores/editorStore'
 import { useI18n } from '@/i18n'
 import { useFlyControls } from '@/hooks/useFlyControls'
 import { CameraSpeedControl } from './CameraSpeedControl'
+import { CameraFocusHandler } from './CameraFocusHandler'
 import { SceneObjects } from './SceneObjects'
 import { TransformGizmo } from './TransformGizmo'
 
@@ -109,6 +110,9 @@ function Scene({ orbitRef }: { orbitRef: React.RefObject<any> }) {
 
       {/* Fly Controls */}
       <FlyControlsHandler orbitRef={orbitRef} />
+
+      {/* Camera Focus Handler (F key) */}
+      <CameraFocusHandler orbitRef={orbitRef} />
 
       {/* Lighting */}
       <ambientLight intensity={0.3} />
