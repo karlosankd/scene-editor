@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import { v4 as uuidv4 } from 'uuid'
+import * as THREE from 'three'
+import { MeshRegistry } from './meshRegistry'
 import type {
   SceneObject,
   Transform,
@@ -338,6 +340,18 @@ export const useEditorStore = create<EditorState>()(
     },
 
     reparentObject: (id, newParentId) => {
+      // Get world position before reparenting
+      const mesh = MeshRegistry.get(id)
+      const worldPosition = new THREE.Vector3()
+      const worldQuaternion = new THREE.Quaternion()
+      const worldScale = new THREE.Vector3()
+
+      if (mesh) {
+        mesh.getWorldPosition(worldPosition)
+        mesh.getWorldQuaternion(worldQuaternion)
+        mesh.getWorldScale(worldScale)
+      }
+
       set((state) => {
         const object = state.objects[id]
         if (!object) return
@@ -361,6 +375,44 @@ export const useEditorStore = create<EditorState>()(
           }
         } else {
           state.rootObjectIds.push(id)
+        }
+
+        // Calculate new local transform to preserve world position
+        if (mesh) {
+          const newParentMesh = newParentId ? MeshRegistry.get(newParentId) : null
+
+          if (newParentMesh) {
+            // Get new parent's world transform
+            const parentWorldPosition = new THREE.Vector3()
+            const parentWorldQuaternion = new THREE.Quaternion()
+            const parentWorldScale = new THREE.Vector3()
+            newParentMesh.getWorldPosition(parentWorldPosition)
+            newParentMesh.getWorldQuaternion(parentWorldQuaternion)
+            newParentMesh.getWorldScale(parentWorldScale)
+
+            // Calculate local position relative to new parent
+            const localPosition = worldPosition.clone().sub(parentWorldPosition)
+            const parentQuatInverse = parentWorldQuaternion.clone().invert()
+            localPosition.applyQuaternion(parentQuatInverse)
+            localPosition.divide(parentWorldScale)
+
+            // Calculate local rotation relative to new parent
+            const localQuaternion = parentQuatInverse.multiply(worldQuaternion)
+            const localEuler = new THREE.Euler().setFromQuaternion(localQuaternion)
+
+            // Calculate local scale relative to new parent
+            const localScale = worldScale.clone().divide(parentWorldScale)
+
+            object.transform.position = [localPosition.x, localPosition.y, localPosition.z]
+            object.transform.rotation = [localEuler.x, localEuler.y, localEuler.z]
+            object.transform.scale = [localScale.x, localScale.y, localScale.z]
+          } else {
+            // No new parent, world position becomes local position
+            const euler = new THREE.Euler().setFromQuaternion(worldQuaternion)
+            object.transform.position = [worldPosition.x, worldPosition.y, worldPosition.z]
+            object.transform.rotation = [euler.x, euler.y, euler.z]
+            object.transform.scale = [worldScale.x, worldScale.y, worldScale.z]
+          }
         }
 
         state.isDirty = true

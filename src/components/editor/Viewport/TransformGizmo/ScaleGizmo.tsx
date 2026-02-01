@@ -72,7 +72,7 @@ export function ScaleGizmo({
           onPointerOut={handlePointerOut}
         />
         {/* Visible Line */}
-        <mesh position={[0, SCALE_LINE_LENGTH / 2, 0]} raycast={() => null}>
+        <mesh position={[0, SCALE_LINE_LENGTH / 2, 0]} raycast={() => null} renderOrder={999}>
           <cylinderGeometry args={[LINE_RADIUS, LINE_RADIUS, SCALE_LINE_LENGTH, 8]} />
           <meshBasicMaterial
             color={isXHovered ? GIZMO_COLORS.HOVER : GIZMO_COLORS.X}
@@ -108,7 +108,7 @@ export function ScaleGizmo({
           onPointerOut={handlePointerOut}
         />
         {/* Visible Line */}
-        <mesh position={[0, SCALE_LINE_LENGTH / 2, 0]} raycast={() => null}>
+        <mesh position={[0, SCALE_LINE_LENGTH / 2, 0]} raycast={() => null} renderOrder={999}>
           <cylinderGeometry args={[LINE_RADIUS, LINE_RADIUS, SCALE_LINE_LENGTH, 8]} />
           <meshBasicMaterial
             color={isYHovered ? GIZMO_COLORS.HOVER : GIZMO_COLORS.Y}
@@ -144,7 +144,7 @@ export function ScaleGizmo({
           onPointerOut={handlePointerOut}
         />
         {/* Visible Line */}
-        <mesh position={[0, SCALE_LINE_LENGTH / 2, 0]} raycast={() => null}>
+        <mesh position={[0, SCALE_LINE_LENGTH / 2, 0]} raycast={() => null} renderOrder={999}>
           <cylinderGeometry args={[LINE_RADIUS, LINE_RADIUS, SCALE_LINE_LENGTH, 8]} />
           <meshBasicMaterial
             color={isZHovered ? GIZMO_COLORS.HOVER : GIZMO_COLORS.Z}

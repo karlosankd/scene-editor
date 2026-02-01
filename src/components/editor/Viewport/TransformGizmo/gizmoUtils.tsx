@@ -100,6 +100,7 @@ export function PriorityMesh({
       ref={meshRef}
       position={position}
       rotation={rotation}
+      renderOrder={999}
       onPointerDown={(e) => onPointerDown(e, axis)}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}

@@ -94,6 +94,7 @@ function PriorityMesh({
       ref={meshRef}
       position={position}
       rotation={rotation}
+      renderOrder={999}
       onPointerDown={(e) => onPointerDown(e, axis)}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
@@ -177,7 +178,7 @@ export function TranslateGizmo({
           onPointerOut={handlePointerOut}
         />
         {/* Visible arrow shaft - raycast disabled */}
-        <mesh position={[0, ARROW_LENGTH / 2 + CENTER_BOX, 0]} raycast={() => null}>
+        <mesh position={[0, ARROW_LENGTH / 2 + CENTER_BOX, 0]} raycast={() => null} renderOrder={999}>
           <cylinderGeometry args={[ARROW_RADIUS, ARROW_RADIUS, ARROW_LENGTH, 8]} />
           <meshBasicMaterial
             color={isXHovered ? GIZMO_COLORS.HOVER : GIZMO_COLORS.X}
@@ -186,7 +187,7 @@ export function TranslateGizmo({
           />
         </mesh>
         {/* Visible arrow head - raycast disabled */}
-        <mesh position={[0, ARROW_LENGTH + CENTER_BOX + CONE_HEIGHT / 2, 0]} raycast={() => null}>
+        <mesh position={[0, ARROW_LENGTH + CENTER_BOX + CONE_HEIGHT / 2, 0]} raycast={() => null} renderOrder={999}>
           <coneGeometry args={[CONE_RADIUS, CONE_HEIGHT, 16]} />
           <meshBasicMaterial
             color={isXHovered ? GIZMO_COLORS.HOVER : GIZMO_COLORS.X}
@@ -210,7 +211,7 @@ export function TranslateGizmo({
           onPointerOut={handlePointerOut}
         />
         {/* Visible arrow shaft - raycast disabled */}
-        <mesh position={[0, ARROW_LENGTH / 2 + CENTER_BOX, 0]} raycast={() => null}>
+        <mesh position={[0, ARROW_LENGTH / 2 + CENTER_BOX, 0]} raycast={() => null} renderOrder={999}>
           <cylinderGeometry args={[ARROW_RADIUS, ARROW_RADIUS, ARROW_LENGTH, 8]} />
           <meshBasicMaterial
             color={isYHovered ? GIZMO_COLORS.HOVER : GIZMO_COLORS.Y}
@@ -219,7 +220,7 @@ export function TranslateGizmo({
           />
         </mesh>
         {/* Visible arrow head - raycast disabled */}
-        <mesh position={[0, ARROW_LENGTH + CENTER_BOX + CONE_HEIGHT / 2, 0]} raycast={() => null}>
+        <mesh position={[0, ARROW_LENGTH + CENTER_BOX + CONE_HEIGHT / 2, 0]} raycast={() => null} renderOrder={999}>
           <coneGeometry args={[CONE_RADIUS, CONE_HEIGHT, 16]} />
           <meshBasicMaterial
             color={isYHovered ? GIZMO_COLORS.HOVER : GIZMO_COLORS.Y}
@@ -243,7 +244,7 @@ export function TranslateGizmo({
           onPointerOut={handlePointerOut}
         />
         {/* Visible arrow shaft - raycast disabled */}
-        <mesh position={[0, ARROW_LENGTH / 2 + CENTER_BOX, 0]} raycast={() => null}>
+        <mesh position={[0, ARROW_LENGTH / 2 + CENTER_BOX, 0]} raycast={() => null} renderOrder={999}>
           <cylinderGeometry args={[ARROW_RADIUS, ARROW_RADIUS, ARROW_LENGTH, 8]} />
           <meshBasicMaterial
             color={isZHovered ? GIZMO_COLORS.HOVER : GIZMO_COLORS.Z}
@@ -252,7 +253,7 @@ export function TranslateGizmo({
           />
         </mesh>
         {/* Visible arrow head - raycast disabled */}
-        <mesh position={[0, ARROW_LENGTH + CENTER_BOX + CONE_HEIGHT / 2, 0]} raycast={() => null}>
+        <mesh position={[0, ARROW_LENGTH + CENTER_BOX + CONE_HEIGHT / 2, 0]} raycast={() => null} renderOrder={999}>
           <coneGeometry args={[CONE_RADIUS, CONE_HEIGHT, 16]} />
           <meshBasicMaterial
             color={isZHovered ? GIZMO_COLORS.HOVER : GIZMO_COLORS.Z}

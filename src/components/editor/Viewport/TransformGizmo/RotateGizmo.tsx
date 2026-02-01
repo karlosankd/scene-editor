@@ -191,6 +191,7 @@ function SectorMesh({
     <mesh
       ref={meshRef}
       geometry={geometry}
+      renderOrder={999}
       onPointerDown={(e) => onPointerDown(e, axis)}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
@@ -310,7 +311,7 @@ export function RotateGizmo({
           onPointerOut={handlePointerOut}
         />
         {/* Visible arc band - flat with width */}
-        <mesh geometry={arcBandGeometry} raycast={() => null}>
+        <mesh geometry={arcBandGeometry} raycast={() => null} renderOrder={999}>
           <meshBasicMaterial
             color={hoveredAxis === 'X' ? GIZMO_COLORS.HOVER : GIZMO_COLORS.X}
             side={THREE.DoubleSide}
@@ -330,7 +331,7 @@ export function RotateGizmo({
           onPointerOut={handlePointerOut}
         />
         {/* White grid lines */}
-        <lineSegments geometry={gridGeometry} raycast={() => null}>
+        <lineSegments geometry={gridGeometry} raycast={() => null} renderOrder={999}>
           <lineBasicMaterial
             color="#ffffff"
             transparent
@@ -356,7 +357,7 @@ export function RotateGizmo({
           onPointerOut={handlePointerOut}
         />
         {/* Visible arc band - flat with width */}
-        <mesh geometry={arcBandGeometry} raycast={() => null}>
+        <mesh geometry={arcBandGeometry} raycast={() => null} renderOrder={999}>
           <meshBasicMaterial
             color={hoveredAxis === 'Y' ? GIZMO_COLORS.HOVER : GIZMO_COLORS.Y}
             side={THREE.DoubleSide}
@@ -376,7 +377,7 @@ export function RotateGizmo({
           onPointerOut={handlePointerOut}
         />
         {/* White grid lines */}
-        <lineSegments geometry={gridGeometry} raycast={() => null}>
+        <lineSegments geometry={gridGeometry} raycast={() => null} renderOrder={999}>
           <lineBasicMaterial
             color="#ffffff"
             transparent
@@ -402,7 +403,7 @@ export function RotateGizmo({
           onPointerOut={handlePointerOut}
         />
         {/* Visible arc band - flat with width */}
-        <mesh geometry={arcBandGeometry} raycast={() => null}>
+        <mesh geometry={arcBandGeometry} raycast={() => null} renderOrder={999}>
           <meshBasicMaterial
             color={hoveredAxis === 'Z' ? GIZMO_COLORS.HOVER : GIZMO_COLORS.Z}
             side={THREE.DoubleSide}
@@ -422,7 +423,7 @@ export function RotateGizmo({
           onPointerOut={handlePointerOut}
         />
         {/* White grid lines */}
-        <lineSegments geometry={gridGeometry} raycast={() => null}>
+        <lineSegments geometry={gridGeometry} raycast={() => null} renderOrder={999}>
           <lineBasicMaterial
             color="#ffffff"
             transparent

@@ -48,12 +48,12 @@ export function TransformGizmo({ orbitRef }: TransformGizmoProps) {
   // Update gizmo position and rotation every frame
   useFrame(() => {
     if (!selectedObject || !groupRef.current) return
-    
+
     const targetMesh = MeshRegistry.get(selectedObject.id)
     if (!targetMesh) return
 
-    // Position matches target
-    groupRef.current.position.copy(targetMesh.position)
+    // Position matches target's world position (important for child objects)
+    targetMesh.getWorldPosition(groupRef.current.position)
     
     // Rotation depends on space
     if (transformMode === 'scale') {
