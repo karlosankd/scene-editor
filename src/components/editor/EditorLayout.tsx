@@ -5,7 +5,7 @@ import { Toolbar } from './Toolbar/Toolbar'
 import { Hierarchy } from './Hierarchy/Hierarchy'
 import { Viewport } from './Viewport/Viewport'
 import { Inspector } from './Inspector/Inspector'
-import { Assets } from './Assets/Assets'
+// import { Assets } from './Assets/Assets'
 import { Timeline } from './Timeline/Timeline'
 import { TemplateSelector } from './Dialogs/TemplateSelector'
 import { useEditorStore } from '@/stores/editorStore'
@@ -76,20 +76,17 @@ export function EditorLayout() {
               <Panel defaultSize={20} minSize={15} maxSize={40}>
                 <PanelGroup direction="vertical">
                   {panels.inspector && (
-                    <Panel defaultSize={60} minSize={20}>
+                    <Panel defaultSize={100} minSize={20}>
                       <Inspector />
                     </Panel>
                   )}
 
-                  {panels.inspector && panels.assets && (
-                    <PanelResizeHandle className="h-1 bg-ue-border hover:bg-ue-accent-blue transition-colors" />
-                  )}
-
-                  {panels.assets && (
+                  {/* Assets Panel Removed as per request */}
+                  {/* {panels.assets && (
                     <Panel defaultSize={40} minSize={20}>
                       <Assets />
                     </Panel>
-                  )}
+                  )} */}
                 </PanelGroup>
               </Panel>
             </>

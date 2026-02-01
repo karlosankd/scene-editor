@@ -19,6 +19,8 @@ import { useEditorStore } from '@/stores/editorStore'
 import { useI18n } from '@/i18n'
 import type { TransformMode } from '@/types'
 
+import { AddObjectMenu } from './AddObjectMenu'
+
 export function Toolbar() {
   const { t } = useI18n()
   const {
@@ -47,6 +49,11 @@ export function Toolbar() {
 
   return (
     <div className="flex items-center h-10 px-2 bg-ue-bg border-b border-ue-border gap-1">
+      {/* Add Object Menu (Place Actors) */}
+      <div className="flex items-center pr-2 border-r border-ue-border mr-1">
+        <AddObjectMenu />
+      </div>
+
       {/* Transform Tools */}
       <div className="flex items-center gap-1 pr-2 border-r border-ue-border">
         {transformTools.map(({ mode, icon: Icon, labelKey, shortcut }) => (

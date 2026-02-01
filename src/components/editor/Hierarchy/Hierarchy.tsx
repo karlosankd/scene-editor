@@ -15,7 +15,6 @@ export function Hierarchy() {
   const settingsButtonRef = useRef<HTMLButtonElement>(null)
 
   const objects = useEditorStore((state) => state.objects)
-  const selectedIds = useEditorStore((state) => state.selectedIds)
   const clearSelection = useEditorStore((state) => state.clearSelection)
   const selectObject = useEditorStore((state) => state.selectObject)
   const removeObject = useEditorStore((state) => state.removeObject)

@@ -212,14 +212,10 @@ function CloudObject({ object }: { object: SceneObject }) {
   const { cloud } = object
 
   return (
-    // @ts-ignore
     <Cloud
       opacity={cloud.opacity ?? 0.5}
       speed={cloud.speed ?? 0.4}
-      width={cloud.width ?? 10}
-      depth={cloud.depth ?? 1.5}
       segments={cloud.segments ?? 20}
-      texture={cloud.texture}
       color={cloud.color}
     />
   )

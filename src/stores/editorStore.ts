@@ -234,7 +234,7 @@ export const useEditorStore = create<EditorState>()(
     panels: {
       hierarchy: true,
       inspector: true,
-      assets: true,
+      assets: false, // Disabled by default
       timeline: false,
     },
 

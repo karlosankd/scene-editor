@@ -56,6 +56,7 @@ export const translations = {
     },
     // Toolbar
     toolbar: {
+      select: '选择',
       move: '移动',
       rotate: '旋转',
       scale: '缩放',
@@ -97,6 +98,7 @@ export const translations = {
         sky: '天空',
         fog: '雾',
         environment: '环境',
+        cloud: '云',
       },
       settingsMenu: {
         hierarchy: '层级',
@@ -171,14 +173,52 @@ export const translations = {
     // Assets Panel
     assets: {
       title: '资源',
+      search: '搜索...',
       primitives: '基础形状',
-      lights: '灯光',
+      lights: '光源',
       models: '模型',
       textures: '纹理',
-      search: '搜索...',
       importModel: '导入模型',
       importTexture: '导入纹理',
       supportedFormats: '支持格式',
+    },
+    // Add Object Menu
+    addMenu: {
+      searchPlaceholder: '开始输入以搜索',
+      getContent: '获取内容',
+      importContent: '导入内容...',
+      placeActor: '放置ACTOR',
+      recent: '最近项',
+      noResults: '未找到结果',
+      dragToPlace: '拖拽以放置',
+      categories: {
+        basic: '基础',
+        lights: '光源',
+        shapes: '形状',
+        visualEffects: '视觉效果',
+      },
+      items: {
+        emptyActor: 'Empty Actor',
+        character: 'Character',
+        pawn: 'Pawn',
+        pointLight: 'Point Light',
+        playerStart: 'Player Start',
+        boxTrigger: 'Box Trigger',
+        sphereTrigger: 'Sphere Trigger',
+        directionalLight: 'Directional Light',
+        spotLight: 'Spot Light',
+        skyLight: 'Sky Light',
+        cube: 'Cube',
+        sphere: 'Sphere',
+        cylinder: 'Cylinder',
+        cone: 'Cone',
+        plane: 'Plane',
+        postProcessVolume: 'Post Process Volume',
+        skyAtmosphere: 'Sky Atmosphere',
+        volumetricCloud: 'Volumetric Cloud',
+        exponentialHeightFog: 'Exponential Height Fog',
+        decal: 'Decal',
+      }
     },
     // Timeline Panel
     timeline: {
@@ -186,22 +226,22 @@ export const translations = {
       noAnimation: '无动画',
       addAnimation: '添加动画',
       noTracks: '无轨道',
-      goToStart: '跳转到开始',
-      goToEnd: '跳转到结束',
+      goToStart: '跳到开始',
+      goToEnd: '跳到结束',
       zoom: '缩放',
     },
     // Common
     common: {
       perspective: '透视',
-      version: '场景编辑器',
+      version: 'Scene Editor',
     },
     // Template Selection
     template: {
       selectTemplate: '选择模板',
-      emptyLevel: '空白关卡',
-      emptyLevelDesc: '完全空白的场景，无任何灯光或环境，适合从零开始构建',
-      basicLevel: '基础关卡',
-      basicLevelDesc: '包含天空、太阳光和大气雾效的基础户外场景',
+      emptyLevel: '空场景',
+      emptyLevelDesc: '一个完全空白的场景，没有灯光或环境，非常适合从头开始构建',
+      basicLevel: '基础场景',
+      basicLevelDesc: '一个带有天空、阳光和大气雾的基本户外场景',
       create: '创建',
       cancel: '取消',
     },
@@ -256,18 +296,19 @@ export const translations = {
     },
     // Window Menu
     window: {
-      hierarchy: 'Outliner',
+      hierarchy: 'Hierarchy',
       inspector: 'Inspector',
       assets: 'Assets',
       timeline: 'Timeline',
     },
     // Toolbar
     toolbar: {
+      select: 'Select',
       move: 'Move',
       rotate: 'Rotate',
       scale: 'Scale',
-      world: 'World Space',
-      local: 'Local Space',
+      world: 'World',
+      local: 'Local',
       grid: 'Grid',
       snap: 'Snap',
       wireframe: 'Wireframe',
@@ -276,7 +317,7 @@ export const translations = {
       play: 'Play',
       pause: 'Pause',
       stop: 'Stop',
-      camera: 'Camera Settings',
+      camera: 'Camera',
     },
     // Hierarchy Panel
     hierarchy: {
@@ -304,6 +345,7 @@ export const translations = {
         sky: 'Sky',
         fog: 'Fog',
         environment: 'Environment',
+        cloud: 'Cloud',
       },
       settingsMenu: {
         hierarchy: 'Hierarchy',
@@ -386,6 +428,44 @@ export const translations = {
       importModel: 'Import Model',
       importTexture: 'Import Texture',
       supportedFormats: 'Supported formats',
+    },
+    // Add Object Menu
+    addMenu: {
+      searchPlaceholder: 'Start typing to search',
+      getContent: 'Get Content',
+      importContent: 'Import Content...',
+      placeActor: 'Place Actor',
+      recent: 'Recent',
+      noResults: 'No results found',
+      dragToPlace: 'Drag to place',
+      categories: {
+        basic: 'Basic',
+        lights: 'Lights',
+        shapes: 'Shapes',
+        visualEffects: 'Visual Effects',
+      },
+      items: {
+        emptyActor: 'Empty Actor',
+        character: 'Character',
+        pawn: 'Pawn',
+        pointLight: 'Point Light',
+        playerStart: 'Player Start',
+        boxTrigger: 'Box Trigger',
+        sphereTrigger: 'Sphere Trigger',
+        directionalLight: 'Directional Light',
+        spotLight: 'Spot Light',
+        skyLight: 'Sky Light',
+        cube: 'Cube',
+        sphere: 'Sphere',
+        cylinder: 'Cylinder',
+        cone: 'Cone',
+        plane: 'Plane',
+        postProcessVolume: 'Post Process Volume',
+        skyAtmosphere: 'Sky Atmosphere',
+        volumetricCloud: 'Volumetric Cloud',
+        exponentialHeightFog: 'Exponential Height Fog',
+        decal: 'Decal',
+      }
     },
     // Timeline Panel
     timeline: {
