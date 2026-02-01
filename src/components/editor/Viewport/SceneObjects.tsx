@@ -4,9 +4,17 @@ import { ThreeEvent, useThree } from '@react-three/fiber'
 import { Sky, Cloud } from '@react-three/drei'
 import { useEditorStore } from '@/stores/editorStore'
 import { MeshRegistry } from '@/stores/meshRegistry'
-import type { SceneObject } from '@/types'
+import type { 
+  SceneObject, 
+  MeshObject as MeshObjectType, 
+  LightObject as LightObjectType,
+  SkyObject as SkyObjectType,
+  CloudObject as CloudObjectType,
+  FogObject as FogObjectType
+} from '@/types'
 
-function MeshObject({ object }: { object: SceneObject }) {
+// Mesh Object Renderer - geometry and material are guaranteed to exist
+function MeshObjectRenderer({ object }: { object: MeshObjectType }) {
   const meshRef = useRef<THREE.Mesh>(null)
   const selectedIds = useEditorStore((state) => state.selectedIds)
   const selectObject = useEditorStore((state) => state.selectObject)
@@ -16,7 +24,6 @@ function MeshObject({ object }: { object: SceneObject }) {
   const isSelected = selectedIds.includes(object.id)
 
   const geometryArgs = useMemo(() => {
-    if (!object.geometry) return null
     const g = object.geometry
     switch (g.type) {
       case 'box':
@@ -37,7 +44,6 @@ function MeshObject({ object }: { object: SceneObject }) {
   }, [object.geometry])
 
   const materialProps = useMemo(() => {
-    if (!object.material) return null
     const m = object.material
     return {
       color: m.color || '#808080',
@@ -48,8 +54,6 @@ function MeshObject({ object }: { object: SceneObject }) {
       wireframe: viewportSettings.showWireframe || m.wireframe || false,
     }
   }, [object.material, viewportSettings.showWireframe])
-
-  if (!geometryArgs || !materialProps) return null
 
   const handleClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation()
@@ -100,12 +104,11 @@ function MeshObject({ object }: { object: SceneObject }) {
   )
 }
 
-function LightHelper({ object }: { object: SceneObject }) {
+// Light Helper - visual representation for light selection
+function LightHelper({ object }: { object: LightObjectType }) {
   const selectedIds = useEditorStore((state) => state.selectedIds)
   const selectObject = useEditorStore((state) => state.selectObject)
   const isSelected = selectedIds.includes(object.id)
-
-  if (!object.light) return null
 
   const handleClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation()
@@ -126,9 +129,8 @@ function LightHelper({ object }: { object: SceneObject }) {
   )
 }
 
-function LightObject({ object }: { object: SceneObject }) {
-  if (!object.light) return null
-
+// Light Object Renderer - light is guaranteed to exist
+function LightObjectRenderer({ object }: { object: LightObjectType }) {
   const { light, transform } = object
   const position = transform.position as [number, number, number]
 
@@ -187,9 +189,9 @@ function LightObject({ object }: { object: SceneObject }) {
   )
 }
 
-// Sky Object Renderer
-function SkyObject({ object }: { object: SceneObject }) {
-  if (!object.sky || !object.visible) return null
+// Sky Object Renderer - sky is guaranteed to exist
+function SkyObjectRenderer({ object }: { object: SkyObjectType }) {
+  if (!object.visible) return null
 
   const { sky } = object
 
@@ -205,9 +207,9 @@ function SkyObject({ object }: { object: SceneObject }) {
   )
 }
 
-// Cloud Object Renderer
-function CloudObject({ object }: { object: SceneObject }) {
-  if (!object.cloud || !object.visible) return null
+// Cloud Object Renderer - cloud is guaranteed to exist
+function CloudObjectRenderer({ object }: { object: CloudObjectType }) {
+  if (!object.visible) return null
 
   const { cloud } = object
 
@@ -221,12 +223,12 @@ function CloudObject({ object }: { object: SceneObject }) {
   )
 }
 
-// Fog Object Renderer - applies fog to scene
-function FogObject({ object }: { object: SceneObject }) {
+// Fog Object Renderer - applies fog to scene, fog is guaranteed to exist
+function FogObjectRenderer({ object }: { object: FogObjectType }) {
   const scene = useThree((state) => state.scene)
 
   useEffect(() => {
-    if (!object.fog || !object.visible) {
+    if (!object.visible) {
       scene.fog = null
       return
     }
@@ -248,6 +250,7 @@ function FogObject({ object }: { object: SceneObject }) {
   return null
 }
 
+// Main Scene Object Renderer - dispatches to type-specific renderers
 function SceneObjectRenderer({ object }: { object: SceneObject }) {
   const groupRef = useRef<THREE.Group>(null)
   const objects = useEditorStore((state) => state.objects)
@@ -263,6 +266,25 @@ function SceneObjectRenderer({ object }: { object: SceneObject }) {
     }
   }, [object.id])
 
+  // Type-narrowing render function
+  const renderObjectContent = () => {
+    switch (object.type) {
+      case 'mesh':
+        return <MeshObjectRenderer object={object} />
+      case 'light':
+        return <LightObjectRenderer object={object} />
+      case 'sky':
+        return <SkyObjectRenderer object={object} />
+      case 'cloud':
+        return <CloudObjectRenderer object={object} />
+      case 'fog':
+        return <FogObjectRenderer object={object} />
+      default:
+        // group, folder, camera, particle, ui, model, environment - no visual representation
+        return null
+    }
+  }
+
   return (
     <group
       ref={groupRef}
@@ -271,11 +293,7 @@ function SceneObjectRenderer({ object }: { object: SceneObject }) {
       scale={object.transform.scale}
       visible={object.visible}
     >
-      {object.type === 'mesh' && <MeshObject object={object} />}
-      {object.type === 'light' && <LightObject object={object} />}
-      {object.type === 'sky' && <SkyObject object={object} />}
-      {object.type === 'cloud' && <CloudObject object={object} />}
-      {object.type === 'fog' && <FogObject object={object} />}
+      {renderObjectContent()}
 
       {children.map((child) => (
         <SceneObjectRenderer key={child.id} object={child} />

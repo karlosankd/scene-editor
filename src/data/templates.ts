@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import type { SceneObject, SkyData, FogData, LightData, CloudData } from '@/types'
+import type { SceneObject, SceneObjectBase, SkyData, FogData, LightData, CloudData, GeometryData, MaterialData } from '@/types'
 
 export interface LevelTemplate {
   id: string
@@ -55,9 +55,11 @@ const defaultSkyLightData: LightData = {
   intensity: 0.6,
 }
 
-// Helper to create a SceneObject with defaults
-function createSceneObject(partial: Partial<SceneObject> & { id: string; name: string; type: SceneObject['type'] }): SceneObject {
+// Base object properties shared by all types
+function createBaseObject(id: string, name: string): Omit<SceneObjectBase, 'type'> {
   return {
+    id,
+    name,
     visible: true,
     locked: false,
     transform: { position: [0, 0, 0], rotation: [0, 0, 0], scale: [1, 1, 1] },
@@ -65,8 +67,41 @@ function createSceneObject(partial: Partial<SceneObject> & { id: string; name: s
     childIds: [],
     components: [],
     userData: {},
-    ...partial,
   }
+}
+
+// Type-safe factory functions for each object type
+function createSkyObject(id: string, name: string, sky: SkyData): SceneObject {
+  return { ...createBaseObject(id, name), type: 'sky', sky }
+}
+
+function createLightObject(id: string, name: string, light: LightData, transform?: SceneObjectBase['transform']): SceneObject {
+  const base = createBaseObject(id, name)
+  if (transform) base.transform = transform
+  return { ...base, type: 'light', light }
+}
+
+function createFogObject(id: string, name: string, fog: FogData): SceneObject {
+  return { ...createBaseObject(id, name), type: 'fog', fog }
+}
+
+function createCloudObject(id: string, name: string, cloud: CloudData, transform?: SceneObjectBase['transform']): SceneObject {
+  const base = createBaseObject(id, name)
+  if (transform) base.transform = transform
+  return { ...base, type: 'cloud', cloud }
+}
+
+// Factory functions for creating type-safe scene objects
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function createMeshObject(id: string, name: string, geometry: GeometryData, material: MaterialData, transform?: SceneObjectBase['transform']): SceneObject {
+  const base = createBaseObject(id, name)
+  if (transform) base.transform = transform
+  return { ...base, type: 'mesh', geometry, material }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function createGroupObject(id: string, name: string): SceneObject {
+  return { ...createBaseObject(id, name), type: 'group' }
 }
 
 export const templates: Record<string, LevelTemplate> = {
@@ -92,59 +127,31 @@ export const templates: Record<string, LevelTemplate> = {
 
       return [
         // Sky Atmosphere
-        createSceneObject({
-          id: skyId,
-          name: 'SkyAtmosphere',
-          type: 'sky',
-          sky: { ...defaultSkyData },
-        }),
+        createSkyObject(skyId, 'SkyAtmosphere', { ...defaultSkyData }),
 
         // Volumetric Clouds
-        createSceneObject({
-          id: cloudId,
-          name: 'VolumetricClouds',
-          type: 'cloud',
-          transform: {
-            position: [0, 50, 0], // Clouds high up
-            rotation: [0, 0, 0],
-            scale: [1, 1, 1],
-          },
-          cloud: { ...defaultCloudData },
+        createCloudObject(cloudId, 'VolumetricClouds', { ...defaultCloudData }, {
+          position: [0, 50, 0], // Clouds high up
+          rotation: [0, 0, 0],
+          scale: [1, 1, 1],
         }),
 
         // Directional Light (Sun)
-        createSceneObject({
-          id: sunId,
-          name: 'DirectionalLight',
-          type: 'light',
-          transform: {
-            position: [50, 50, 50],
-            rotation: [-Math.PI / 4, Math.PI / 4, 0],
-            scale: [1, 1, 1],
-          },
-          light: { ...defaultSunLightData },
+        createLightObject(sunId, 'DirectionalLight', { ...defaultSunLightData }, {
+          position: [50, 50, 50],
+          rotation: [-Math.PI / 4, Math.PI / 4, 0],
+          scale: [1, 1, 1],
         }),
 
         // Sky Light (Hemisphere Light for ambient)
-        createSceneObject({
-          id: skyLightId,
-          name: 'SkyLight',
-          type: 'light',
-          transform: {
-            position: [0, 50, 0],
-            rotation: [0, 0, 0],
-            scale: [1, 1, 1],
-          },
-          light: { ...defaultSkyLightData },
+        createLightObject(skyLightId, 'SkyLight', { ...defaultSkyLightData }, {
+          position: [0, 50, 0],
+          rotation: [0, 0, 0],
+          scale: [1, 1, 1],
         }),
 
         // Exponential Height Fog
-        createSceneObject({
-          id: fogId,
-          name: 'ExponentialHeightFog',
-          type: 'fog',
-          fog: { ...defaultFogData },
-        }),
+        createFogObject(fogId, 'ExponentialHeightFog', { ...defaultFogData }),
       ]
     },
   },

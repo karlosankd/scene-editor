@@ -146,32 +146,122 @@ export interface Component {
   data: Record<string, unknown>
 }
 
-// Scene Object
-export interface SceneObject {
+// ============================================================================
+// Scene Object - Discriminated Union Types
+// ============================================================================
+
+// Base interface shared by all scene objects
+export interface SceneObjectBase {
   id: string
   name: string
-  type: ObjectType
   visible: boolean
   locked: boolean
   transform: Transform
   parentId: string | null
   childIds: string[]
-  // Mesh specific
+  components: Component[]
+  userData: Record<string, unknown>
+}
+
+// Mesh Object - has geometry and material
+export interface MeshObject extends SceneObjectBase {
+  type: 'mesh'
+  geometry: GeometryData
+  material: MaterialData
+}
+
+// Light Object - has light data
+export interface LightObject extends SceneObjectBase {
+  type: 'light'
+  light: LightData
+}
+
+// Group Object - container for other objects
+export interface GroupObject extends SceneObjectBase {
+  type: 'group'
+}
+
+// Folder Object - organizational container (doesn't affect transforms)
+export interface FolderObject extends SceneObjectBase {
+  type: 'folder'
+}
+
+// Model Object - external 3D model
+export interface ModelObject extends SceneObjectBase {
+  type: 'model'
+  modelUrl: string
+}
+
+// Sky Object - atmospheric sky
+export interface SkyObject extends SceneObjectBase {
+  type: 'sky'
+  sky: SkyData
+}
+
+// Cloud Object - volumetric clouds
+export interface CloudObject extends SceneObjectBase {
+  type: 'cloud'
+  cloud: CloudData
+}
+
+// Fog Object - atmospheric fog
+export interface FogObject extends SceneObjectBase {
+  type: 'fog'
+  fog: FogData
+}
+
+// Environment Object - HDRI environment
+export interface EnvironmentObject extends SceneObjectBase {
+  type: 'environment'
+  environment: EnvironmentData
+}
+
+// Camera Object - scene camera
+export interface CameraObject extends SceneObjectBase {
+  type: 'camera'
+}
+
+// Particle Object - particle system
+export interface ParticleObject extends SceneObjectBase {
+  type: 'particle'
+}
+
+// UI Object - 2D UI element in 3D space
+export interface UISceneObject extends SceneObjectBase {
+  type: 'ui'
+}
+
+// ============================================================================
+// SceneObject Union Type
+// ============================================================================
+export type SceneObject =
+  | MeshObject
+  | LightObject
+  | GroupObject
+  | FolderObject
+  | ModelObject
+  | SkyObject
+  | CloudObject
+  | FogObject
+  | EnvironmentObject
+  | CameraObject
+  | ParticleObject
+  | UISceneObject
+
+// ============================================================================
+// Helper type for creating objects (used in store)
+// ============================================================================
+export type CreateSceneObjectInput = Partial<SceneObjectBase> & {
+  type: ObjectType
+  // Optional type-specific fields for creation
   geometry?: GeometryData
   material?: MaterialData
-  // Light specific
   light?: LightData
-  // Model specific
   modelUrl?: string
-  // Environment specific
   sky?: SkyData
   cloud?: CloudData
   fog?: FogData
   environment?: EnvironmentData
-  // Components
-  components: Component[]
-  // Metadata
-  userData: Record<string, unknown>
 }
 
 // Editor State

@@ -434,7 +434,8 @@ function MaterialEditor() {
   const selectedObject = useSelectedObject()
   const updateObject = useEditorStore((state) => state.updateObject)
 
-  if (!selectedObject || !selectedObject.material) return null
+  // Type guard: only show for mesh objects
+  if (!selectedObject || selectedObject.type !== 'mesh') return null
 
   const { material } = selectedObject
 
@@ -506,7 +507,8 @@ function LightEditor() {
   const selectedObject = useSelectedObject()
   const updateObject = useEditorStore((state) => state.updateObject)
 
-  if (!selectedObject || !selectedObject.light) return null
+  // Type guard: only show for light objects
+  if (!selectedObject || selectedObject.type !== 'light') return null
 
   const { light } = selectedObject
 

@@ -6,6 +6,7 @@ import { MeshRegistry } from './meshRegistry'
 import { templates, type LevelTemplate } from '@/data/templates'
 import type {
   SceneObject,
+  CreateSceneObjectInput,
   Transform,
   TransformMode,
   TransformSpace,
@@ -72,7 +73,7 @@ interface EditorState {
 
   // Actions
   // Objects
-  addObject: (object: Partial<SceneObject>) => string
+  addObject: (object: CreateSceneObjectInput) => string
   removeObject: (id: string) => void
   updateObject: (id: string, updates: Partial<SceneObject>) => void
   updateTransform: (id: string, transform: Partial<Transform>) => void
@@ -241,21 +242,99 @@ export const useEditorStore = create<EditorState>()(
     // Object Actions
     addObject: (partial) => {
       const id = uuidv4()
-      const object: SceneObject = {
+      
+      // Base properties shared by all object types
+      const baseObject = {
         id,
         name: partial.name || 'Object',
-        type: partial.type || 'mesh',
         visible: partial.visible ?? true,
         locked: partial.locked ?? false,
         transform: partial.transform || { ...defaultTransform },
         parentId: partial.parentId || null,
         childIds: partial.childIds || [],
-        geometry: partial.geometry,
-        material: partial.material || { ...defaultMaterial },
-        light: partial.light,
-        modelUrl: partial.modelUrl,
         components: partial.components || [],
         userData: partial.userData || {},
+      }
+
+      // Create the correct discriminated type based on object type
+      let object: SceneObject
+      switch (partial.type) {
+        case 'mesh':
+          object = {
+            ...baseObject,
+            type: 'mesh',
+            geometry: partial.geometry || { type: 'box', width: 1, height: 1, depth: 1 },
+            material: partial.material || { ...defaultMaterial },
+          }
+          break
+        case 'light':
+          object = {
+            ...baseObject,
+            type: 'light',
+            light: partial.light || { type: 'point', color: '#ffffff', intensity: 1 },
+          }
+          break
+        case 'model':
+          object = {
+            ...baseObject,
+            type: 'model',
+            modelUrl: partial.modelUrl || '',
+          }
+          break
+        case 'sky':
+          object = {
+            ...baseObject,
+            type: 'sky',
+            sky: partial.sky || {
+              sunPosition: [0, 1, 0],
+              turbidity: 10,
+              rayleigh: 2,
+              mieCoefficient: 0.005,
+              mieDirectionalG: 0.8,
+              inclination: 0.49,
+              azimuth: 0.25,
+            },
+          }
+          break
+        case 'cloud':
+          object = {
+            ...baseObject,
+            type: 'cloud',
+            cloud: partial.cloud || { opacity: 0.5, speed: 0.4, width: 10, depth: 1.5 },
+          }
+          break
+        case 'fog':
+          object = {
+            ...baseObject,
+            type: 'fog',
+            fog: partial.fog || { type: 'exponential', color: '#cccccc', density: 0.01 },
+          }
+          break
+        case 'environment':
+          object = {
+            ...baseObject,
+            type: 'environment',
+            environment: partial.environment || { preset: 'sunset', background: true, blur: 0 },
+          }
+          break
+        case 'group':
+          object = { ...baseObject, type: 'group' }
+          break
+        case 'folder':
+          object = { ...baseObject, type: 'folder' }
+          break
+        case 'camera':
+          object = { ...baseObject, type: 'camera' }
+          break
+        case 'particle':
+          object = { ...baseObject, type: 'particle' }
+          break
+        case 'ui':
+          object = { ...baseObject, type: 'ui' }
+          break
+        default:
+          // Default to group if type is not recognized
+          object = { ...baseObject, type: 'group' }
       }
 
       set((state) => {

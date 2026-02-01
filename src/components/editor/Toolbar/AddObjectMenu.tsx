@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 import { useEditorStore } from '@/stores/editorStore'
 import { useI18n } from '@/i18n'
-import type { ObjectType, SceneObject } from '@/types'
+import type { ObjectType, CreateSceneObjectInput } from '@/types'
 
 export function AddObjectMenu() {
   const [isOpen, setIsOpen] = useState(false)
@@ -55,13 +55,13 @@ export function AddObjectMenu() {
   const createObject = (
     type: ObjectType,
     name: string,
-    extras: Partial<Omit<SceneObject, 'id' | 'name' | 'type'>> = {}
+    extras: Omit<CreateSceneObjectInput, 'type' | 'name'> = {}
   ) => {
     addObject({
       name,
       type,
       ...extras,
-    })
+    } as CreateSceneObjectInput)
     setIsOpen(false)
     setHoveredCategory(null)
   }
