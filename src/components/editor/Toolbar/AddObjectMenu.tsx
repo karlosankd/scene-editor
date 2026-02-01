@@ -19,12 +19,6 @@ import { useEditorStore } from '@/stores/editorStore'
 import { useI18n } from '@/i18n'
 import type { ObjectType } from '@/types'
 
-// Mock Recent Items
-const MOCK_RECENT_ITEMS = [
-  { label: 'Cube', icon: Box, actionType: 'mesh', actionName: 'Cube', extras: { geometry: { type: 'box', width: 1, height: 1, depth: 1 } } },
-  { label: 'Empty Actor', icon: Layers, actionType: 'group', actionName: 'Actor', extras: {} }
-]
-
 export function AddObjectMenu() {
   const [isOpen, setIsOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
@@ -33,6 +27,12 @@ export function AddObjectMenu() {
   const menuRef = useRef<HTMLDivElement>(null)
   const { t } = useI18n()
   const addObject = useEditorStore((state) => state.addObject)
+
+  // Recent Items - using translations
+  const recentItems = [
+    { label: t.addMenu.items.cube, icon: Box, actionType: 'mesh', actionName: t.addMenu.items.cube, extras: { geometry: { type: 'box', width: 1, height: 1, depth: 1 } } },
+    { label: t.addMenu.items.emptyActor, icon: Layers, actionType: 'group', actionName: 'Actor', extras: {} }
+  ]
 
   // Close when clicking outside
   useEffect(() => {
@@ -246,7 +246,7 @@ export function AddObjectMenu() {
                    <div className="text-[10px] font-bold text-[#606060] uppercase tracking-wider mb-1 border-b border-[#3e3e42] pb-1">
                     {t.addMenu.recent}
                   </div>
-                  {MOCK_RECENT_ITEMS.map((item, idx) => (
+                  {recentItems.map((item, idx) => (
                     <button
                       key={idx}
                       onClick={() => createObject(item.actionType as any, item.actionName, item.extras)}
