@@ -5,11 +5,12 @@ import { useEditorStore, useSelectedObject } from '@/stores/editorStore'
 import { transformDragState } from '@/hooks/useTransformDragState'
 import { Axis } from './constants'
 import { MeshRegistry } from '@/stores/meshRegistry'
+import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 
 interface UseGizmoDragProps {
   onDragStart?: () => void
   onDragEnd?: () => void
-  orbitRef: React.RefObject<any>
+  orbitRef: React.RefObject<OrbitControlsImpl>
 }
 
 export function useGizmoDrag({ onDragStart, onDragEnd, orbitRef }: UseGizmoDragProps) {
@@ -153,7 +154,7 @@ export function useGizmoDrag({ onDragStart, onDragEnd, orbitRef }: UseGizmoDragP
         targetMesh.position.copy(state.startObjectPosition).add(_vec3b)
       } else {
         // Constrained move
-        let moveAxis = _vec3c.set(0, 0, 0)
+        const moveAxis = _vec3c.set(0, 0, 0)
         
         if (state.axis === 'X' || state.axis === 'XY' || state.axis === 'XZ') moveAxis.x = 1
         if (state.axis === 'Y' || state.axis === 'XY' || state.axis === 'YZ') moveAxis.y = 1

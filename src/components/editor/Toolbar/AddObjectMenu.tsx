@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 import { useEditorStore } from '@/stores/editorStore'
 import { useI18n } from '@/i18n'
-import type { ObjectType } from '@/types'
+import type { ObjectType, SceneObject } from '@/types'
 
 export function AddObjectMenu() {
   const [isOpen, setIsOpen] = useState(false)
@@ -30,8 +30,8 @@ export function AddObjectMenu() {
 
   // Recent Items - using translations
   const recentItems = [
-    { label: t.addMenu.items.cube, icon: Box, actionType: 'mesh', actionName: t.addMenu.items.cube, extras: { geometry: { type: 'box', width: 1, height: 1, depth: 1 } } },
-    { label: t.addMenu.items.emptyActor, icon: Layers, actionType: 'group', actionName: 'Actor', extras: {} }
+    { label: t.addMenu.items.cube, icon: Box, actionType: 'mesh' as const, actionName: t.addMenu.items.cube, extras: { geometry: { type: 'box' as const, width: 1, height: 1, depth: 1 } } },
+    { label: t.addMenu.items.emptyActor, icon: Layers, actionType: 'group' as const, actionName: 'Actor', extras: {} }
   ]
 
   // Close when clicking outside
@@ -55,7 +55,7 @@ export function AddObjectMenu() {
   const createObject = (
     type: ObjectType,
     name: string,
-    extras: Record<string, any> = {}
+    extras: Partial<Omit<SceneObject, 'id' | 'name' | 'type'>> = {}
   ) => {
     addObject({
       name,
@@ -249,7 +249,7 @@ export function AddObjectMenu() {
                   {recentItems.map((item, idx) => (
                     <button
                       key={idx}
-                      onClick={() => createObject(item.actionType as any, item.actionName, item.extras)}
+                      onClick={() => createObject(item.actionType as ObjectType, item.actionName, item.extras)}
                       className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-[#3e3e42] text-left rounded"
                     >
                       <div className="flex items-center gap-3">

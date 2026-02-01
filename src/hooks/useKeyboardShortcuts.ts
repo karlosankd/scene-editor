@@ -34,7 +34,7 @@ export function useKeyboardShortcuts() {
     // When RMB is held, these keys are handled by useFlyControls for camera movement
     if (!ctrl && !rightMouseState.isDown) {
       switch (e.key.toLowerCase()) {
-        case ' ':
+        case ' ': {
           // Space - Cycle through transform modes (select -> translate -> rotate -> scale -> select)
           e.preventDefault()
           const modes: TransformMode[] = ['select', 'translate', 'rotate', 'scale']
@@ -42,6 +42,7 @@ export function useKeyboardShortcuts() {
           const nextIndex = (currentIndex + 1) % modes.length
           setTransformMode(modes[nextIndex])
           break
+        }
         case 'q':
           // Q - Select tool (UE5 style - switches to select mode, no transform gizmo)
           e.preventDefault()

@@ -98,7 +98,7 @@ export function MenuBar({ onNewProject }: MenuBarProps) {
           newProject('Untitled Project')
         }
         break
-      case 'saveProject':
+      case 'saveProject': {
         const project = saveProject()
         const blob = new Blob([JSON.stringify(project, null, 2)], { type: 'application/json' })
         const url = URL.createObjectURL(blob)
@@ -108,7 +108,8 @@ export function MenuBar({ onNewProject }: MenuBarProps) {
         a.click()
         URL.revokeObjectURL(url)
         break
-      case 'export':
+      }
+      case 'export': {
         const json = exportProject()
         const exportBlob = new Blob([json], { type: 'application/json' })
         const exportUrl = URL.createObjectURL(exportBlob)
@@ -118,7 +119,8 @@ export function MenuBar({ onNewProject }: MenuBarProps) {
         exportA.click()
         URL.revokeObjectURL(exportUrl)
         break
-      case 'openProject':
+      }
+      case 'openProject': {
         const input = document.createElement('input')
         input.type = 'file'
         input.accept = '.json'
@@ -139,6 +141,7 @@ export function MenuBar({ onNewProject }: MenuBarProps) {
         }
         input.click()
         break
+      }
       case 'undo':
         undo()
         break

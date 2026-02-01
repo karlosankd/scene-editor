@@ -87,29 +87,7 @@ export function flattenHierarchy(
   return result
 }
 
-/**
- * Gets all object IDs between two objects in the flattened hierarchy
- * Used for shift-click range selection
- */
-export function getObjectIdsBetween(
-  flattenedObjects: FlattenedObject[],
-  startId: string,
-  endId: string
-): string[] {
-  const startIndex = flattenedObjects.findIndex((f) => f.object.id === startId)
-  const endIndex = flattenedObjects.findIndex((f) => f.object.id === endId)
 
-  if (startIndex === -1 || endIndex === -1) {
-    return []
-  }
-
-  const minIndex = Math.min(startIndex, endIndex)
-  const maxIndex = Math.max(startIndex, endIndex)
-
-  return flattenedObjects
-    .slice(minIndex, maxIndex + 1)
-    .map((f) => f.object.id)
-}
 
 /**
  * Checks if an object is a descendant of another object

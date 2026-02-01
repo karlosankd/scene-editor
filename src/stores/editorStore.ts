@@ -827,11 +827,7 @@ export const useEditorStore = create<EditorState>()(
 )
 
 // Selectors
-export const useSelectedObjects = () => {
-  const objects = useEditorStore((state) => state.objects)
-  const selectedIds = useEditorStore((state) => state.selectedIds)
-  return selectedIds.map((id) => objects[id]).filter(Boolean)
-}
+
 
 export const useSelectedObject = () => {
   const objects = useEditorStore((state) => state.objects)
@@ -844,8 +840,4 @@ export const useObject = (id: string) => {
   return useEditorStore((state) => state.objects[id])
 }
 
-export const useRootObjects = () => {
-  const objects = useEditorStore((state) => state.objects)
-  const rootIds = useEditorStore((state) => state.rootObjectIds)
-  return rootIds.map((id) => objects[id]).filter(Boolean)
-}
+

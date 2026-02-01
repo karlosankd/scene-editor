@@ -2,12 +2,12 @@ import { describe, it, expect } from 'vitest'
 import {
   filterObjects,
   flattenHierarchy,
-  getObjectIdsBetween,
+
   isDescendant,
   canReparent,
   getObjectIconType,
 } from './utils'
-import { createMockHierarchy, createMockObject } from '@/test/mocks'
+import { createMockHierarchy } from '@/test/mocks'
 
 describe('filterObjects', () => {
   const { objects, rootIds } = createMockHierarchy()
@@ -220,43 +220,7 @@ describe('flattenHierarchy', () => {
   })
 })
 
-describe('getObjectIdsBetween', () => {
-  const { objects, rootIds } = createMockHierarchy()
-  const expandedIds = new Set(['parent-1', 'child-1'])
-  const flattened = flattenHierarchy(objects, rootIds, expandedIds)
 
-  it('returns IDs between two objects inclusive', () => {
-    const result = getObjectIdsBetween(flattened, 'parent-1', 'grandchild-1')
-
-    expect(result).toContain('parent-1')
-    expect(result).toContain('child-1')
-    expect(result).toContain('grandchild-1')
-  })
-
-  it('works in reverse order', () => {
-    const result = getObjectIdsBetween(flattened, 'grandchild-1', 'parent-1')
-
-    expect(result).toContain('parent-1')
-    expect(result).toContain('child-1')
-    expect(result).toContain('grandchild-1')
-  })
-
-  it('returns single ID when start and end are same', () => {
-    const result = getObjectIdsBetween(flattened, 'child-1', 'child-1')
-
-    expect(result).toEqual(['child-1'])
-  })
-
-  it('returns empty array when ID not found', () => {
-    const result = getObjectIdsBetween(flattened, 'nonexistent', 'parent-1')
-    expect(result).toHaveLength(0)
-  })
-
-  it('returns empty array for empty flattened list', () => {
-    const result = getObjectIdsBetween([], 'parent-1', 'child-1')
-    expect(result).toHaveLength(0)
-  })
-})
 
 describe('isDescendant', () => {
   const { objects } = createMockHierarchy()

@@ -7,12 +7,13 @@ import { TranslateGizmo } from './TranslateGizmo'
 import { RotateGizmo } from './RotateGizmo'
 import { ScaleGizmo } from './ScaleGizmo'
 import { useGizmoDrag } from './useGizmoDrag'
+import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 
 // Gizmo uses layer 1 for priority raycasting
 const GIZMO_LAYER = 1
 
 interface TransformGizmoProps {
-  orbitRef: React.RefObject<any>
+  orbitRef: React.RefObject<OrbitControlsImpl>
 }
 
 export function TransformGizmo({ orbitRef }: TransformGizmoProps) {

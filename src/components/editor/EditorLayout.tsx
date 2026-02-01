@@ -5,7 +5,7 @@ import { Toolbar } from './Toolbar/Toolbar'
 import { Hierarchy } from './Hierarchy/Hierarchy'
 import { Viewport } from './Viewport/Viewport'
 import { Inspector } from './Inspector/Inspector'
-// import { Assets } from './Assets/Assets'
+
 import { Timeline } from './Timeline/Timeline'
 import { TemplateSelector } from './Dialogs/TemplateSelector'
 import { useEditorStore } from '@/stores/editorStore'
@@ -81,12 +81,7 @@ export function EditorLayout() {
                     </Panel>
                   )}
 
-                  {/* Assets Panel Removed as per request */}
-                  {/* {panels.assets && (
-                    <Panel defaultSize={40} minSize={20}>
-                      <Assets />
-                    </Panel>
-                  )} */}
+
                 </PanelGroup>
               </Panel>
             </>

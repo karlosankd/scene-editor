@@ -11,7 +11,7 @@ vi.mock('@/stores/editorStore', async () => {
   return {
     ...actual,
     useEditorStore: vi.fn(),
-    useRootObjects: vi.fn(),
+
   }
 })
 

@@ -63,13 +63,14 @@ export function useClipboard() {
               e.preventDefault()
             }
             break
-          case 'd':
+          case 'd': {
             const newId = duplicateObject(currentId)
             if (newId) {
               selectObject(newId)
             }
             e.preventDefault()
             break
+          }
         }
       }
     }

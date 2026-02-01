@@ -3,6 +3,7 @@ import { useThree, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { rightMouseState } from './useRightMouseState'
 import { useEditorStore } from '@/stores/editorStore'
+import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 
 interface FlyControlsState {
   moveForward: boolean
@@ -25,7 +26,7 @@ interface FlyControlsState {
 // Store speed globally so it persists
 let globalSpeed = 5
 
-export function useFlyControls(enabled: boolean = true, orbitRef?: React.RefObject<any>) {
+export function useFlyControls(enabled: boolean = true, orbitRef?: React.RefObject<OrbitControlsImpl>) {
   const { camera, gl } = useThree()
   const setCameraSpeed = useEditorStore((state) => state.setCameraSpeed)
   const cameraSpeed = useEditorStore((state) => state.cameraSpeed)

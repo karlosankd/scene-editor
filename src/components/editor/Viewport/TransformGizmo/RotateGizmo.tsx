@@ -1,23 +1,8 @@
-import { useMemo, useRef, useEffect } from 'react'
+import { useMemo, useRef } from 'react'
 import { ThreeEvent } from '@react-three/fiber'
 import * as THREE from 'three'
 import { GIZMO_COLORS, GIZMO_SIZES, Axis } from './constants'
-
-// Custom raycast that returns priority distance so gizmo is always on top
-function usePriorityRaycast(ref: React.RefObject<THREE.Mesh>) {
-  useEffect(() => {
-    if (!ref.current) return
-    const mesh = ref.current
-    const originalRaycast = mesh.raycast.bind(mesh)
-    mesh.raycast = (raycaster, intersects) => {
-      const startLen = intersects.length
-      originalRaycast(raycaster, intersects)
-      for (let i = startLen; i < intersects.length; i++) {
-        intersects[i].distance = 0
-      }
-    }
-  }, [])
-}
+import { usePriorityRaycast } from './gizmoUtils'
 
 // Create a 90° sector with square grid pattern (UE5 style)
 function createSectorWithSquareGrid(radius: number, gridSize: number = 0.15, arcBandWidth: number = 0.08): {

@@ -17,7 +17,7 @@ export function usePriorityRaycast(ref: React.RefObject<THREE.Mesh>) {
         intersects[i].distance = 0
       }
     }
-  }, [])
+  }, [ref])
 }
 
 // Hitbox component with priority raycast (invisible, for hit detection)

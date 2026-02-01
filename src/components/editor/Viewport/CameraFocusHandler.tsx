@@ -2,9 +2,10 @@ import { useEffect } from 'react'
 import { useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useEditorStore } from '@/stores/editorStore'
+import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 
 interface CameraFocusHandlerProps {
-  orbitRef: React.RefObject<any>
+  orbitRef: React.RefObject<OrbitControlsImpl>
 }
 
 export function CameraFocusHandler({ orbitRef }: CameraFocusHandlerProps) {
@@ -16,6 +17,7 @@ export function CameraFocusHandler({ orbitRef }: CameraFocusHandlerProps) {
   useEffect(() => {
     if (!focusTargetId || !orbitRef.current) return
 
+    const controls = orbitRef.current
     const targetObject = objects[focusTargetId]
     if (!targetObject) {
       clearFocusTarget()
@@ -51,7 +53,7 @@ export function CameraFocusHandler({ orbitRef }: CameraFocusHandlerProps) {
 
       // Animate camera to new position
       const startPosition = camera.position.clone()
-      const startTarget = orbitRef.current.target.clone()
+      const startTarget = controls.target.clone()
       const duration = 500 // ms
       const startTime = Date.now()
 
@@ -66,8 +68,8 @@ export function CameraFocusHandler({ orbitRef }: CameraFocusHandlerProps) {
         camera.position.lerpVectors(startPosition, newPosition, easeT)
 
         // Interpolate target
-        orbitRef.current.target.lerpVectors(startTarget, center, easeT)
-        orbitRef.current.update()
+        controls.target.lerpVectors(startTarget, center, easeT)
+        controls.update()
 
         if (t < 1) {
           requestAnimationFrame(animate)
@@ -88,7 +90,7 @@ export function CameraFocusHandler({ orbitRef }: CameraFocusHandlerProps) {
 
       // Animate camera
       const startPosition = camera.position.clone()
-      const startTarget = orbitRef.current.target.clone()
+      const startTarget = controls.target.clone()
       const duration = 500
       const startTime = Date.now()
 
@@ -98,8 +100,8 @@ export function CameraFocusHandler({ orbitRef }: CameraFocusHandlerProps) {
         const easeT = 1 - Math.pow(1 - t, 3)
 
         camera.position.lerpVectors(startPosition, newPosition, easeT)
-        orbitRef.current.target.lerpVectors(startTarget, position, easeT)
-        orbitRef.current.update()
+        controls.target.lerpVectors(startTarget, position, easeT)
+        controls.update()
 
         if (t < 1) {
           requestAnimationFrame(animate)

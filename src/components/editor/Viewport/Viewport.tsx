@@ -11,6 +11,7 @@ import { CameraSpeedControl } from './CameraSpeedControl'
 import { CameraFocusHandler } from './CameraFocusHandler'
 import { SceneObjects } from './SceneObjects'
 import { TransformGizmo } from './TransformGizmo'
+import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 
 function PostProcessingEffects() {
   const postProcessing = useEditorStore((state) => state.postProcessing)
@@ -83,12 +84,12 @@ function PostProcessingEffects() {
   return <EffectComposer>{effects}</EffectComposer>
 }
 
-function FlyControlsHandler({ orbitRef }: { orbitRef: React.RefObject<any> }) {
+function FlyControlsHandler({ orbitRef }: { orbitRef: React.RefObject<OrbitControlsImpl> }) {
   useFlyControls(true, orbitRef)
   return null
 }
 
-function Scene({ orbitRef }: { orbitRef: React.RefObject<any> }) {
+function Scene({ orbitRef }: { orbitRef: React.RefObject<OrbitControlsImpl> }) {
   const editorSettings = useEditorStore((state) => state.editorSettings)
 
   return (
@@ -159,7 +160,7 @@ export function Viewport() {
   const { t } = useI18n()
   const editorSettings = useEditorStore((state) => state.editorSettings)
   const viewportSettings = useEditorStore((state) => state.viewportSettings)
-  const orbitRef = useRef<any>(null)
+  const orbitRef = useRef<OrbitControlsImpl>(null)
 
   return (
     <div className="w-full h-full bg-ue-bg-dark relative">
