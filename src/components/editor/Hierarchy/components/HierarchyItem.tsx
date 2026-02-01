@@ -1,10 +1,9 @@
+import React from 'react'
 import {
   ChevronRight,
   ChevronDown,
   Eye,
   EyeOff,
-  Lock,
-  Unlock,
   Box,
   Sun,
   Camera,
@@ -19,6 +18,7 @@ import type { DragState, RenameState } from '../types'
 import { HighlightedText } from './HighlightedText'
 import { InlineRenameInput } from './InlineRenameInput'
 import { DropIndicator } from './DropIndicator'
+import { UE5_COLORS, UE5_INDENT, UE5_ROW_HEIGHT } from '../constants'
 
 interface HierarchyItemProps {
   object: SceneObject
@@ -40,10 +40,6 @@ interface HierarchyItemProps {
   onDrop: (e: React.DragEvent) => void
   onDragEnd: () => void
 }
-
-// UE5 风格的行高和缩进常量
-const UE5_ROW_HEIGHT = 'h-6' // 24px - 更紧凑
-const UE5_INDENT = 12 // 12px per level
 
 export function HierarchyItem({
   object,
@@ -76,54 +72,49 @@ export function HierarchyItem({
   const isDragTarget = dragState.dropTargetId === object.id
   const isDragging = dragState.draggedId === object.id
 
-  // 判断是否因父级隐藏而继承隐藏状态
+  // Inherited visibility logic
   const isInheritedHidden = isParentHidden && object.visible
   const isEffectivelyHidden = !object.visible || isParentHidden
 
-  // UE5 风格的类型图标 - 使用 UE5 配色方案
+  // UE5 Type Icons & Colors
   const getIcon = () => {
-    const iconSize = 14
+    const size = 14 // 18px in prompt might be too big for 24px row, scaling down slightly for Lucide
+    const className = "flex-shrink-0"
+    
     switch (object.type) {
       case 'light':
-        // UE5: 黄色表示灯光
-        return <Sun size={iconSize} className="text-yellow-400" />
+        return <Sun size={size} color={UE5_COLORS.light} className={className} />
       case 'camera':
-        // UE5: 蓝色表示相机
-        return <Camera size={iconSize} className="text-blue-400" />
+        return <Camera size={size} color={UE5_COLORS.camera} className={className} />
       case 'group':
-        // UE5: 绿色表示组/蓝图
-        return <Layers size={iconSize} className="text-green-400" />
+        return <Layers size={size} color={UE5_COLORS.group} className={className} />
       case 'folder':
-        // UE5: 黄/橙色文件夹
         return isExpanded ? (
-          <FolderOpen size={iconSize} className="text-amber-500" />
+          <FolderOpen size={size} color={UE5_COLORS.folder} className={className} />
         ) : (
-          <Folder size={iconSize} className="text-amber-500" />
+          <Folder size={size} color={UE5_COLORS.folder} className={className} />
         )
       case 'particle':
-        // UE5: 紫色表示粒子/特效
-        return <Sparkles size={iconSize} className="text-purple-400" />
+        return <Sparkles size={size} color={UE5_COLORS.particle} className={className} />
       case 'mesh':
       default:
-        // UE5: 青色表示静态网格
-        return <Box size={iconSize} className="text-cyan-400" />
+        // Use Box for mesh
+        return <Box size={size} color={UE5_COLORS.mesh} className={className} />
     }
   }
 
-  // 获取可见性图标 - 支持继承隐藏状态
   const getVisibilityIcon = () => {
     if (isInheritedHidden) {
-      // 父级隐藏导致的继承隐藏 - 灰色眼睛
-      return <Eye size={14} className="text-ue-text-muted opacity-40" />
+      return <Eye size={14} className="text-[#707070] opacity-50" />
     } else if (!object.visible) {
-      // 自身隐藏
-      return <EyeOff size={14} className="text-ue-text-muted" />
+      return <EyeOff size={14} className="text-[#707070]" />
     } else {
-      // 可见
-      return <Eye size={14} className="text-ue-text-secondary" />
+      // Only show on hover or if hidden (handled by parent CSS group-hover)
+      return <Eye size={14} className="text-[#a0a0a0] opacity-0 group-hover:opacity-100 transition-opacity" />
     }
   }
 
+  // Event Handlers
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     selectObject(object.id, e.ctrlKey || e.metaKey)
@@ -132,7 +123,7 @@ export function HierarchyItem({
   const handleDoubleClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     if (!isRenaming) {
-      onRenameSubmit()
+      onRenameSubmit() // Or focus/frame object in viewport (not implemented here)
     }
   }
 
@@ -141,26 +132,19 @@ export function HierarchyItem({
     updateObject(object.id, { visible: !object.visible })
   }
 
-  const handleToggleLock = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    updateObject(object.id, { locked: !object.locked })
-  }
-
   const dropIndicatorPosition = isDragTarget ? dragState.dropPosition : null
 
-  // UE5 风格的选中颜色
+  // Row Styling
   const getRowClassName = () => {
-    const base = `flex items-center ${UE5_ROW_HEIGHT} cursor-pointer select-none group`
+    const base = `flex items-center w-full ${UE5_ROW_HEIGHT} cursor-pointer select-none group text-[12px]`
     
     if (isSelected) {
-      // UE5 选中色: #005d9e
-      return `${base} bg-[#005d9e]`
+      return `${base} bg-[#0d6efd] text-white`
     }
     if (isDragTarget && dropIndicatorPosition === 'inside') {
-      return `${base} bg-[#1a1a1a] ring-1 ring-[#005d9e]`
+      return `${base} bg-[#1a1a1a] ring-1 ring-[#0d6efd]`
     }
-    // UE5 hover: 更浅的灰色
-    return `${base} hover:bg-[#2a2a2a]`
+    return `${base} hover:bg-[#3a3a3a] text-[#d4d4d4]`
   }
 
   return (
@@ -183,22 +167,31 @@ export function HierarchyItem({
         onDoubleClick={handleDoubleClick}
         onContextMenu={onContextMenu}
       >
-        {/* UE5 布局: 左侧固定区域 - 可见性图标 (始终显示) */}
-        <button
-          className="w-6 h-full flex items-center justify-center flex-shrink-0 hover:bg-[#3a3a3a]"
-          onClick={handleToggleVisible}
-          title={isInheritedHidden ? 'Hidden by parent' : object.visible ? 'Hide' : 'Show'}
-        >
-          {getVisibilityIcon()}
-        </button>
-
-        {/* 缩进区域 + 展开箭头 */}
+        {/* Column 1: Visibility (24px fixed) */}
         <div 
-          className="flex items-center flex-shrink-0"
-          style={{ paddingLeft: `${depth * UE5_INDENT}px` }}
+          className="w-[24px] h-full flex items-center justify-center flex-shrink-0"
+          onClick={handleToggleVisible}
         >
-          <button
-            className="w-4 h-4 flex items-center justify-center"
+          {/* Always show if hidden/inherited, else show on group-hover */}
+          {(!object.visible || isInheritedHidden) ? (
+             <span className="flex items-center justify-center w-full h-full">
+               {getVisibilityIcon()}
+             </span>
+          ) : (
+            <span className="flex items-center justify-center w-full h-full hover:bg-white/10 rounded-sm">
+              {getVisibilityIcon()}
+            </span>
+          )}
+        </div>
+
+        {/* Column 2: Name (Flex) */}
+        <div className="flex-1 flex items-center h-full min-w-0 pr-2">
+          {/* Indentation */}
+          <div style={{ width: `${depth * UE5_INDENT}px` }} className="flex-shrink-0 h-full" />
+          
+          {/* Expand Arrow (16px) */}
+          <div 
+            className="w-[16px] h-full flex items-center justify-center flex-shrink-0"
             onClick={(e) => {
               e.stopPropagation()
               onToggleExpand()
@@ -206,51 +199,41 @@ export function HierarchyItem({
           >
             {hasChildren && (
               isExpanded ? (
-                <ChevronDown size={12} className="text-ue-text-secondary" />
+                <ChevronDown size={10} className={isSelected ? "text-white" : "text-[#a0a0a0]"} />
               ) : (
-                <ChevronRight size={12} className="text-ue-text-secondary" />
+                <ChevronRight size={10} className={isSelected ? "text-white" : "text-[#a0a0a0]"} />
               )
             )}
-          </button>
+          </div>
+
+          {/* Type Icon (18px container) */}
+          <div className="w-[20px] h-full flex items-center justify-center flex-shrink-0 mr-1">
+            {getIcon()}
+          </div>
+
+          {/* Name Text */}
+          <div className="flex-1 min-w-0 truncate">
+            {isRenaming ? (
+              <InlineRenameInput
+                value={renameState.value}
+                onChange={onRenameChange}
+                onSubmit={onRenameSubmit}
+                onCancel={onRenameCancel}
+              />
+            ) : (
+              <HighlightedText
+                text={object.name}
+                searchQuery={searchQuery}
+                className={`truncate ${isEffectivelyHidden ? 'opacity-50' : ''}`}
+              />
+            )}
+          </div>
         </div>
 
-        {/* 类型图标 */}
-        <span className={`mr-1.5 flex-shrink-0 ${isEffectivelyHidden ? 'opacity-50' : ''}`}>
-          {getIcon()}
-        </span>
-
-        {/* 名称或重命名输入框 */}
-        <div className="flex-1 min-w-0 mr-2">
-          {isRenaming ? (
-            <InlineRenameInput
-              value={renameState.value}
-              onChange={onRenameChange}
-              onSubmit={onRenameSubmit}
-              onCancel={onRenameCancel}
-            />
-          ) : (
-            <HighlightedText
-              text={object.name}
-              searchQuery={searchQuery}
-              className={`text-xs truncate ${
-                isSelected ? 'text-white' : 'text-[#c8c8c8]'
-              } ${isEffectivelyHidden ? 'opacity-50' : ''}`}
-            />
-          )}
+        {/* Column 3: Type Text (120px fixed) */}
+        <div className={`w-[120px] h-full flex items-center px-2 flex-shrink-0 border-l border-transparent group-hover:border-[#4a4a4a] ${isSelected ? 'text-blue-100' : 'text-[#707070]'}`}>
+          <span className="truncate capitalize">{object.type}</span>
         </div>
-
-        {/* 右侧操作区域 - 锁定图标 (hover 时显示) */}
-        <button
-          className="opacity-0 group-hover:opacity-100 w-5 h-5 flex items-center justify-center flex-shrink-0 hover:bg-[#3a3a3a] rounded"
-          onClick={handleToggleLock}
-          title={object.locked ? 'Unlock' : 'Lock'}
-        >
-          {object.locked ? (
-            <Lock size={12} className="text-amber-400" />
-          ) : (
-            <Unlock size={12} className="text-ue-text-muted" />
-          )}
-        </button>
       </div>
     </div>
   )

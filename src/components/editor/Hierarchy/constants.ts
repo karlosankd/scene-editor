@@ -1,9 +1,8 @@
 import type { ObjectType } from '@/types'
 import type { ContextMenuAction } from './types'
 
-/**
- * Context menu item definition
- */
+// --- Original Constants ---
+
 export interface ContextMenuItem {
   action: ContextMenuAction
   label: string
@@ -12,9 +11,6 @@ export interface ContextMenuItem {
   separator?: boolean
 }
 
-/**
- * Main context menu items
- */
 export const CONTEXT_MENU_ITEMS: ContextMenuItem[] = [
   { action: 'rename', label: 'Rename', shortcut: 'F2' },
   { action: 'duplicate', label: 'Duplicate', shortcut: 'Ctrl+D' },
@@ -28,9 +24,6 @@ export const CONTEXT_MENU_ITEMS: ContextMenuItem[] = [
   { action: 'createGroup', label: 'Create Group Child' },
 ]
 
-/**
- * Create child object options
- */
 export const CREATE_CHILD_OPTIONS: { type: ObjectType; label: string }[] = [
   { type: 'mesh', label: 'Mesh' },
   { type: 'light', label: 'Light' },
@@ -38,9 +31,6 @@ export const CREATE_CHILD_OPTIONS: { type: ObjectType; label: string }[] = [
   { type: 'group', label: 'Group' },
 ]
 
-/**
- * Keyboard shortcuts
- */
 export const KEYBOARD_SHORTCUTS = {
   RENAME: 'F2',
   DELETE: 'Delete',
@@ -56,10 +46,44 @@ export const KEYBOARD_SHORTCUTS = {
   ARROW_RIGHT: 'ArrowRight',
 } as const
 
-/**
- * Drop position threshold (percentage of item height)
- */
 export const DROP_THRESHOLD = {
   TOP: 0.25,
   BOTTOM: 0.75,
 } as const
+
+// --- New UE5 Design Constants ---
+
+export const UE5_COLORS = {
+  folder: '#e8a33c', // Orange/Yellow
+  light: '#f4d03f',  // Yellow
+  sky: '#87ceeb',    // Light Blue
+  mesh: '#4a9eff',   // Blue
+  camera: '#9b59b6', // Purple
+  group: '#808080',  // Gray
+  particle: '#ff69b4', // Pink
+  atmosphere: '#5dade2', // Teal
+  
+  // UI Colors
+  selected: '#0d6efd',
+  selectedText: '#ffffff',
+  hover: '#3a3a3a',
+  background: '#2a2a2a',
+  headerBg: '#252525',
+  border: '#3a3a3a',
+  text: '#d4d4d4',
+  textMuted: '#707070',
+} as const
+
+export const UE5_INDENT = 20 // 20px per level
+export const UE5_ROW_HEIGHT = 'h-[24px]' // Compact height
+
+export const TYPE_ICONS_MAPPING: Record<ObjectType, string> = {
+  folder: 'folder',
+  mesh: 'mesh',
+  light: 'light',
+  camera: 'camera',
+  group: 'group',
+  particle: 'particle',
+  model: 'mesh',
+  ui: 'group',
+}
