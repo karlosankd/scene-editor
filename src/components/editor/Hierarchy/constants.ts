@@ -89,4 +89,5 @@ export const TYPE_ICONS_MAPPING: Record<ObjectType, string> = {
   sky: 'light',
   fog: 'particle',
   environment: 'group',
+  cloud: 'particle', // Use particle icon for clouds
 }

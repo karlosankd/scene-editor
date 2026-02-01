@@ -11,6 +11,7 @@ export type ObjectType =
   | 'particle'
   | 'ui'
   | 'sky'
+  | 'cloud'
   | 'fog'
   | 'environment'
 
@@ -108,6 +109,17 @@ export interface SkyData {
   azimuth: number
 }
 
+// Cloud Data (for @react-three/drei Cloud component)
+export interface CloudData {
+  opacity?: number
+  speed?: number
+  width?: number
+  depth?: number
+  segments?: number
+  texture?: string
+  color?: string
+}
+
 // Fog Data (for Three.js FogExp2)
 export interface FogData {
   type: 'linear' | 'exponential'
@@ -153,6 +165,7 @@ export interface SceneObject {
   modelUrl?: string
   // Environment specific
   sky?: SkyData
+  cloud?: CloudData
   fog?: FogData
   environment?: EnvironmentData
   // Components

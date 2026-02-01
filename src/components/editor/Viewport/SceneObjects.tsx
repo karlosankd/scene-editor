@@ -1,7 +1,7 @@
 import { useRef, useMemo, useEffect } from 'react'
 import * as THREE from 'three'
 import { ThreeEvent, useThree } from '@react-three/fiber'
-import { Sky } from '@react-three/drei'
+import { Sky, Cloud } from '@react-three/drei'
 import { useEditorStore } from '@/stores/editorStore'
 import { MeshRegistry } from '@/stores/meshRegistry'
 import type { SceneObject } from '@/types'
@@ -205,6 +205,26 @@ function SkyObject({ object }: { object: SceneObject }) {
   )
 }
 
+// Cloud Object Renderer
+function CloudObject({ object }: { object: SceneObject }) {
+  if (!object.cloud || !object.visible) return null
+
+  const { cloud } = object
+
+  return (
+    // @ts-ignore
+    <Cloud
+      opacity={cloud.opacity ?? 0.5}
+      speed={cloud.speed ?? 0.4}
+      width={cloud.width ?? 10}
+      depth={cloud.depth ?? 1.5}
+      segments={cloud.segments ?? 20}
+      texture={cloud.texture}
+      color={cloud.color}
+    />
+  )
+}
+
 // Fog Object Renderer - applies fog to scene
 function FogObject({ object }: { object: SceneObject }) {
   const scene = useThree((state) => state.scene)
@@ -258,6 +278,7 @@ function SceneObjectRenderer({ object }: { object: SceneObject }) {
       {object.type === 'mesh' && <MeshObject object={object} />}
       {object.type === 'light' && <LightObject object={object} />}
       {object.type === 'sky' && <SkyObject object={object} />}
+      {object.type === 'cloud' && <CloudObject object={object} />}
       {object.type === 'fog' && <FogObject object={object} />}
 
       {children.map((child) => (
